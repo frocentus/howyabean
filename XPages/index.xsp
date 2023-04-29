@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+	<xp:this.data>
+		<xp:dominoView var="contacts" viewName="contacts" />
+	</xp:this.data>
+	<xc:navbar />
+	<xp:div id="uiContainer" styleClass="container">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<xp:text value="My Contacts" />
+						</h3>
+					</div>
+					<table class="table table-striped">
+						<tbody>
+							<xp:repeat id="repeatContacts" var="eachContact" value="#{contacts}" rows="5">
+								<tr>
+									<td>
+										<xp:link text="#{eachContact.firstName} #{eachContact.lastName}" value="/contact.xsp?id=#{javascript:return eachContact.getUniversalID();}" />
+										<xp:link styleClass="btn btn-danger pull-right">
+											<xp:eventHandler event="onclick" action="#{javascript:eachContact.getDocument().remove(true);}" refreshMode="partial"
+												refreshId="uiContainer" />
+											<i class="fa fa-lg fa-trash-o" />
+										</xp:link>
+									</td>
+								</tr>
+							</xp:repeat>
+						</tbody>
+					</table>
+					<div class="panel-footer">
+						<ul class="nav nav-pills nav-justified">
+							<li>
+								<xp:pager id="pagerContactsPrevious" for="repeatContacts" partialRefresh="true">
+									<xp:pagerControl type="Previous" id="pagerControlPrevious" value="Previous" />
+								</xp:pager>
+							</li>
+							<li>
+								<xp:pager id="pagerContactsNext" for="repeatContacts" partialRefresh="true">
+									<xp:pagerControl type="Next" id="pagerControlNext" value="Next" />
+								</xp:pager>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</xp:div>
+</xp:view>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.0" replicaid="85257C3A00267A39" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="1be" sequence="5" unid="25712923BD033C5D85257C4600127397">
+<created><datetime>20131218T222132,39-05</datetime></created>
+<modified><datetime>20131218T222224,61-05</datetime></modified>
+<revised><datetime>20131218T222224,60-05</datetime></revised>
+<lastaccessed><datetime>20131218T222224,61-05</datetime></lastaccessed>
+<addedtofile><datetime>20131218T222132,40-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
+<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<item name="$TITLE"><text>bootswatch_slate.theme</text></item>
+<item name="$Flags"><text>34567Cg~`</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>bootswatch_slate.theme</text></item></note>

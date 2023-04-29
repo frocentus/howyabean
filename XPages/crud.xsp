@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+	<xp:this.data>
+		<xp:dominoView var="contacts" viewName="contacts" />
+	</xp:this.data>
+	<xc:navbar />
+	<xp:div id="uiContainer" styleClass="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<xp:text value="My Contacts" />
+						</h3>
+					</div>
+					<xp:div id="contactListContainer" styleClass="panel-body">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<xp:text value="First Name" />
+									</th>
+									<th colspan="3">
+										<xp:text value="Last Name" />
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<xp:repeat var="eachContact" value="#{contacts}">
+									<tr>
+										<td>
+											<xp:text value="#{eachContact.firstName}" />
+										</td>
+										<td>
+											<xp:text value="#{eachContact.lastName}" />
+										</td>
+										<td>
+											<div class="btn-group">
+												<xp:link value="/crud.xsp?id=#{javascript:return eachContact.getUniversalID();}" styleClass="btn btn-default">
+													<i class="fa fa-lg fa-pencil" />
+												</xp:link>
+												<xp:link styleClass="btn btn-danger">
+													<xp:eventHandler event="onclick" action="#{javascript:eachContact.getDocument().remove(true);}" refreshMode="partial"
+														refreshId="contactListContainer" />
+													<i class="fa fa-lg fa-trash-o" />
+												</xp:link>
+											</div>
+										</td>
+									</tr>
+								</xp:repeat>
+							</tbody>
+						</table>
+					</xp:div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<xp:text value="Contact Details" />
+						</h3>
+					</div>
+					<div class="panel-body">
+						<xp:form>
+							<xp:this.attrs>
+								<xp:attr name="role" value="form" />
+							</xp:this.attrs>
+							<div class="form-group">
+								<xp:label for="firstName" value="First Name" />
+								<xp:inputText id="firstName" value="#{contact.firstName}" />
+							</div>
+							<div class="form-group">
+								<xp:label for="lastName" value="Last Name" />
+								<xp:inputText id="lastName" value="#{contact.lastName}" />
+							</div>
+							<div class="form-group">
+								<xp:label for="email" value="Email" />
+								<xp:inputText id="email" value="#{contact.email}" />
+							</div>
+							<div class="form-group">
+								<xp:label for="employer" value="Employer" />
+								<xp:inputText id="employer" value="#{contact.employer}" />
+							</div>
+							<div class="form-group">
+								<xp:label for="jobTitle" value="Job Title" />
+								<xp:inputText id="jobTitle" value="#{contact.jobTitle}" />
+							</div>
+							<div class="form-group">
+								<xp:label for="birthDate" value="Birthday" />
+								<xp:inputText id="birthDate" type="date" value="#{contact.birthDate}">
+									<xp:this.converter>
+										<xp:convertDateTime type="date" dateStyle="short" pattern="yyyy-mm-dd" />
+									</xp:this.converter>
+								</xp:inputText>
+							</div>
+							<xp:button id="buttonSaveContact" styleClass="pull-right btn-success" value=" Save" rendered="#{contact.editMode}">
+								<xp:eventHandler event="onclick" action="#{contact.save}" refreshMode="partial" refreshId="uiContainer" />
+								<i class="fa fa-lg fa-save" />
+							</xp:button>
+							<xp:button id="buttonEditContact" styleClass="pull-right btn-primary" value=" Edit" rendered="#{!contact.editMode}">
+								<xp:eventHandler event="onclick" action="#{contact.edit}" refreshMode="partial" refreshId="uiContainer" />
+								<i class="fa fa-lg fa-pencil" />
+							</xp:button>
+						</xp:form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</xp:div>
+</xp:view>

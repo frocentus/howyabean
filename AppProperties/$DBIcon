@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='form' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.0'
+ replicaid='85257C3A00267A39'>
+<noteinfo noteid='22e' unid='1FB86F8283DF071A85257C48007FAF8C' sequence='5'>
+<created><datetime>20131221T181440,12-05</datetime></created>
+<modified><datetime>20140101T220917,43-05</datetime></modified>
+<revised><datetime>20140101T212844,76-05</datetime></revised>
+<lastaccessed><datetime>20140101T220917,43-05</datetime></lastaccessed>
+<addedtofile><datetime>20131221T181650,94-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
+<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<item name='$TITLE'><text>$DBIcon</text></item>
+<item name='$Flags'><text>34Ci~Q</text></item>
+<item name='$ImagesWide' sign='true'><number>1</number></item>
+<item name='$ImagesHigh' sign='true'><number>1</number></item>
+<item name='$ImagesColorize' sign='true'><number>0</number></item>
+<item name='$FileSize' sign='true'><number>1305</number></item>
+<item name='$ImageData' sign='true'>
+<rawitemdata type='1'>
+mQAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAH0AHAAAAAIAAAAAABkFAAABAAAAAAAAAAAAAAB8
+ACMFAAAZBRoF/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1
+c2luZyBJSkcgSlBFRyB2ODApLCBxdWFsaXR5ID0gOTAK/9sAQwADAgIDAgIDAwMDBAMDBAUIBQUE
+BAUKBwcGCAwKDAwLCgsLDQ4SEA0OEQ4LCxAWEBETFBUVFQwPFxgWFBgSFBUU/9sAQwEDBAQFBAUJ
+BQUJFA0LDRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU
+/8AAEQgAIAAgAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQ
+AAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYX
+GBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqS
+k5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz
+9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQE
+AAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1
+Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKj
+pKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwD
+AQACEQMRAD8A9/8AiHY6f8Lv2ezeaPbW8Wv6k8Gj6QWiBWO5mO0OeOiKHf8A4BXw7qP7B/xRurkX
+MD6dr0V0WkkvEvQhVm6mQSbWJ5PI3V93/HbQ7nWfgVoM1ncSRXFlfJNGke3JcwSqGG4Eb1ySueK4
+Pw18W9Q0LwRcSeIdJuJtR00+TmxIP27khHUfwkgEkduvHSvFxuInSqJR2Pcy/DQrwbZ8D+O/2bvG
+fwKZPEepajbW0lhPG8dxYzlnicHIIOByCP1r9HvhPDa/GL9lLwz4t1uxt/7R1KymW4IjUCUxyyRb
+8DgbvL3YHHPFfKf7Q+p+J/iV4T1q0vLC0s2EUV5Hb25d3CsUZEkYgAsVbIwByCCOK+w/gdpcvhn9
+k3wnodxbNaT2Nk8To+PnbexLj2YkkexFdWAnKqmpvVHHmdNUOWVNaNpfma/jS7lX4NQTwrG0lnLB
+ODJ0GDtz+TfrXzNrHj/XpGaO4t0MX27zjeurl2Ayu0IuVPJ4JwBwCMjnnND/AGk7v4seM/DXhTXA
+dI8KzXkVtcWMDkM5JABkc4zhsEDAAx0yM1sfEPS9V8E+K9I8PRPoN7e6vK0OnaoL1YmlIH3micgI
++CBnnJ4BOcVz42kq81OC0Wh05RiPq0ZU6271VjoL1IvGPjPTdK8qO387F1cJAg+VY8c8erFQPTJr
+6pvdMFr4JnQAhIrf7vYHHA/DFfIes/DhPgr4TuPH7eIY77xfpkkcx8qQtBIpkWNrfB5ZSHLFsDlV
+x0zXsfhb9rDwV8QfhrcrDepYaqkRa5sLmQK6cdV/vL7j8cdK9fBUo4XDypv4n+R5eY15YurGa+Bf
+mf/ZAA==
+</rawitemdata></item>
+<item name='$MimeType' sign='true'><text>image/jpeg</text></item>
+<item name='$FileModDT' sign='true'><datetime>20131221T181402,00-05</datetime></item>
+<item name='$ImageNames' sign='true'><text>Y:\Downloads\bean32.jpg</text></item>
+<item name='$DesignerVersion'><text>8.5.3</text></item></note>
+

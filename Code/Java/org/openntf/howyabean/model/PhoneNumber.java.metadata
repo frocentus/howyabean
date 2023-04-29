@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.0" replicaid="85257C3A00267A39" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="23a" sequence="5" unid="71278063909B826B85257C52002A0225">
+<created><datetime>20131231T023850,61-05</datetime></created>
+<modified><datetime>20131231T024008,63-05</datetime></modified>
+<revised><datetime>20131231T024008,62-05</datetime></revised>
+<lastaccessed><datetime>20131231T024008,63-05</datetime></lastaccessed>
+<addedtofile><datetime>20131231T023850,62-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
+<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>org/openntf/howyabean/model/PhoneNumber.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>org/openntf/howyabean/model/PhoneNumber.java</text></item></note>

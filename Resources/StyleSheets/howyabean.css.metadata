@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.0" replicaid="85257C3A00267A39" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="25e" sequence="6" unid="199A39BBB71753CB85257C560013A430">
+<created><datetime>20140103T223432,16-05</datetime></created>
+<modified><datetime>20140103T223547,29-05</datetime></modified>
+<revised><datetime>20140103T223547,28-05</datetime></revised>
+<lastaccessed><datetime>20140103T223547,29-05</datetime></lastaccessed>
+<addedtofile><datetime>20140103T223432,17-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
+<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<item name="$TITLE"><text>howyabean.css</text></item>
+<item name="$MimeType"><text>text/css</text></item>
+<item name="$Flags"><text>34C=Q</text></item>
+<item name="$MimeCharSet"><text>UTF-8</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>howyabean.css</text></item></note>
