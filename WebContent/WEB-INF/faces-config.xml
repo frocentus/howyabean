@@ -7,4 +7,9 @@
 		<managed-bean-scope>view</managed-bean-scope>
 		<managed-bean-class>org.openntf.howyabean.model.ContactModel</managed-bean-class>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>foerder</managed-bean-name>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-bean-class>org.openntf.howyabean.foerderung.FoerderungApp</managed-bean-class>
+	</managed-bean>
 </faces-config>

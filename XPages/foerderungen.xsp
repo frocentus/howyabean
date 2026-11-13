@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+	<xp:this.beforePageLoad><![CDATA[#{javascript:
+		if (param.role) {
+			foerder.setRole(param.role);
+		}
+	}]]></xp:this.beforePageLoad>
+	<xc:navbar />
+	<xp:div id="uiContainer" styleClass="container">
+		<div class="page-header">
+			<h1>Förderungen <small>Schulische Sport- und Projekttage</small></h1>
+			<p class="text-muted">
+				Prototyp des Backoffice: Anträge prüfen, Nachbesserung anfordern, bewilligen oder ablehnen.
+				Aktive Rolle: <strong>#{foerder.role}</strong>.
+			</p>
+		</div>
+
+		<div class="btn-group" role="group" aria-label="Rolle">
+			<xp:link text="Sachbearbeiter" value="/foerderungen.xsp?role=Sachbearbeiter" styleClass="btn btn-default" />
+			<xp:link text="Genehmiger" value="/foerderungen.xsp?role=Genehmiger" styleClass="btn btn-default" />
+			<xp:link text="Finanzabteilung" value="/foerderungen.xsp?role=Finanzabteilung" styleClass="btn btn-default" />
+		</div>
+
+		<xp:panel rendered="#{!empty foerder.message}">
+			<div class="alert alert-info" style="margin-top: 15px;">#{foerder.message}</div>
+		</xp:panel>
+
+		<div class="row" style="margin-top: 15px;">
+			<div class="col-md-12">
+				<xp:panel rendered="#{foerder.count == 0}">
+					<div class="alert alert-warning">
+						Noch keine Anträge vorhanden.
+						<xp:button value="Demo-Anträge anlegen" id="seed" styleClass="btn btn-primary btn-sm">
+							<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+								action="#{javascript:foerder.seedDemo();}" />
+						</xp:button>
+					</div>
+				</xp:panel>
+
+				<p class="text-muted">
+					<xp:text value="#{foerder.count}" /> Anträge, bewilligt: <xp:text value="#{foerder.summeBewilligt}" /> EUR
+				</p>
+
+				<table class="table table-striped table-condensed">
+					<thead>
+						<tr>
+							<th>Antragsteller</th>
+							<th>Kind</th>
+							<th>Schule / Veranstaltung</th>
+							<th>Einkommen</th>
+							<th>Stufe</th>
+							<th>Betrag</th>
+							<th>Status</th>
+							<th style="width: 230px;">Aktionen</th>
+						</tr>
+					</thead>
+					<tbody>
+						<xp:repeat var="a" value="#{foerder.antraege}">
+							<tr>
+								<td>
+									<xp:text value="#{a.applicant}" />
+									<br />
+									<xp:text styleClass="text-muted small" value="#{a.created}" />
+								</td>
+								<td>
+									<xp:text value="#{a.child}" />
+								</td>
+								<td>
+									<xp:text value="#{a.school}" />
+									<br />
+									<xp:text styleClass="text-muted small" value="#{a.schoolType}" />
+								</td>
+								<td>
+									<xp:text value="#{a.incomeText}" /> EUR
+								</td>
+								<td>
+									<xp:text value="#{a.stageText}" />
+								</td>
+								<td>
+									<xp:text value="#{a.amountText}" />
+								</td>
+								<td>
+									<span class="#{a.status == 'Bewilligt' ? 'label label-success' : (a.status == 'Abgelehnt' or a.status == 'Storniert' ? 'label label-danger' : 'label label-default')}">#{a.status}</span>
+									<xp:panel rendered="#{a.status == 'Nachbesserung'}">
+										<xp:text styleClass="text-muted small" value="#{a.due}" />
+									</xp:panel>
+								</td>
+								<td>
+									<xp:link text="Prüfen" styleClass="btn btn-xs btn-primary"
+										rendered="#{a.status == 'Eingereicht' and foerder.role == 'Sachbearbeiter'}">
+										<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+											action="#{javascript:foerder.action('pruefen', a.unid);}" />
+									</xp:link>
+									<xp:link text="Nachbesserung" styleClass="btn btn-xs btn-warning"
+										rendered="#{a.status == 'In Pruefung' and foerder.role == 'Sachbearbeiter'}">
+										<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+											action="#{javascript:foerder.action('nachbesserung', a.unid);}" />
+									</xp:link>
+									<xp:link text="Eingelangt" styleClass="btn btn-xs btn-default"
+										rendered="#{a.status == 'Nachbesserung' and foerder.role == 'Sachbearbeiter'}">
+										<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+											action="#{javascript:foerder.action('wiedervorlage', a.unid);}" />
+									</xp:link>
+									<xp:link text="Bewilligen" styleClass="btn btn-xs btn-success"
+										rendered="#{a.status == 'In Pruefung' and foerder.role == 'Genehmiger'}">
+										<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+											action="#{javascript:foerder.action('bewilligen', a.unid);}" />
+									</xp:link>
+									<xp:link text="Ablehnen" styleClass="btn btn-xs btn-danger"
+										rendered="#{a.status == 'In Pruefung' and foerder.role == 'Genehmiger'}">
+										<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+											action="#{javascript:foerder.action('ablehnen', a.unid);}" />
+									</xp:link>
+									<xp:link text="Storno" styleClass="btn btn-xs btn-default"
+										rendered="#{a.open and (foerder.role == 'Sachbearbeiter' or foerder.role == 'Genehmiger')}">
+										<xp:eventHandler event="onclick" submit="true" refreshMode="complete"
+											action="#{javascript:foerder.action('storno', a.unid);}" />
+									</xp:link>
+								</td>
+							</tr>
+						</xp:repeat>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</xp:div>
+</xp:view>
