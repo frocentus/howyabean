@@ -268,6 +268,33 @@ Details that bite:
   trailing bytes and oversized payloads refused). That harness is not part of the repo, and
   a Designer/`nsfodp` build remains the real gate.
 
+## Troubleshooting
+
+**`java.security.AccessControlException: Access denied ("java.lang.reflect.ReflectPermission" "suppressAccessChecks")`**
+
+`msgpack-core` looks up `sun.misc.Unsafe` through reflection (`MessageBuffer`, `DirectBufferAccess`
+→ `setAccessible`) while its static initializer runs, so the first codec value fails with
+`ExceptionInInitializerError` under the Java security manager of Notes/Designer or a Domino
+server. Grant the permission where the app runs:
+
+```
+// <Notes>\jvm\lib\security\java.policy, or <Domino>\jvm\lib\security\java.policy
+grant codeBase "xspnsf://server:0/howyabean.nsf/-" {
+    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+};
+```
+
+For a local Designer preview a blanket `grant { ... };` without a codeBase is enough, but on a
+shared policy file scope it to the database. Restart Designer/the server afterwards.
+
+If you would rather not grant it at all, replace `MessagePackCodec` with a plain
+`DataOutputStream` codec: the codec seam exists for exactly that, and it would also drop the
+jar, its 123 KB in the NSF and the build-path entry.
+
+`AppProperties/database.properties` is rewritten by Designer on every sync (replica id, ODS,
+ACL log, icon element) — read it as a description of the target database, not as a file to
+hand-edit.
+
 ## Known limitations
 
 * The phone book is **one opaque MIME part**. Views, full-text search, agents and conflict
