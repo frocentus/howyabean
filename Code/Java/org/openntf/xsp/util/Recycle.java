@@ -43,12 +43,16 @@ public final class Recycle implements AutoCloseable {
 	 * is the form for objects that only become available inside the block.
 	 */
 	public static Recycle of(final Base... values) {
-		return new Recycle().add(values);
+		Recycle result = new Recycle();
+		result.add(values);
+		return result;
 	}
 
 	/** Opens a scope owning every Domino object of the given collection, e.g. a document's items. */
 	public static Recycle of(final Collection<?> values) {
-		return new Recycle().add(values);
+		Recycle result = new Recycle();
+		result.add(values);
+		return result;
 	}
 
 	public Recycle add(final Base... values) {

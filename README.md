@@ -16,7 +16,7 @@ file documents how the application and its storage layer work.
 
 | Component | Notes |
 |---|---|
-| Domino server | 9.0.1 FP10+ (Java 8 runtime, and a Designer that compiles at 1.8), 10, 11 or 12. The sources target Java 8; the level is pinned in `.settings/org.eclipse.jdt.core.prefs`, so no Java 11+ syntax. |
+| Domino server | 14.5+ (JVM 21). The compiler level in `.settings/org.eclipse.jdt.core.prefs` is pinned to 21 so it matches Designer 14.5's JRE; the source itself only uses Java 8 language features, so lowering `compliance`/`source`/`codegen.targetPlatform` is all it takes to target an older server. |
 | Domino Designer | to open the ODP and sync it into an NSF. There is no build file; see [Building](#building). |
 | Extension Library | `com.ibm.xsp.extlib` (`xsp.library.depends` in `WebContent/WEB-INF/xsp.properties`). |
 | Third-party jar | `msgpack-core-0.9.8.jar` (Apache 2.0), a Java archive design element under `Code/Jars/` (with its `.metadata` companion). Designer puts it on the NSF build path itself, so `.classpath` must not list it again. |
@@ -255,9 +255,9 @@ Details that bite:
 * `WebContent/WEB-INF/classes` is the compiler output directory (`.classpath`); it is not
   in the repository and should not be committed.
 * The compiler level is versioned in `.settings/org.eclipse.jdt.core.prefs`
-  (`compliance`/`source`/`codegen.targetPlatform` = 1.8) instead of coming from DDE global
-  preferences. Without it, Designers silently compile at older levels and Java 8 syntax
-  fails.
+  (`compliance`/`source`/`codegen.targetPlatform` = 21). It has to match the JRE Designer
+  runs on (14.5 ships JVM 21), otherwise Eclipse reports *The compiler compliance specified
+  is X but a JRE Y is used*; set the three values to 1.8 to target Domino 14.0 or older.
 * A headless build is possible with the `org.openntf.nsfodp` Maven plugin; alternatively
   compile `Code/Java` against the Domino Java API jars from the Designer installation.
   Both are suggested in [REVIEW.md §5](REVIEW.md), neither is committed.
