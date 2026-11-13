@@ -6,9 +6,7 @@
 			<div class="col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">
-							<xp:text value="Contact Details" />
-						</h3>
+						<h3 class="panel-title">Contact Details</h3>
 					</div>
 					<div class="panel-body">
 						<xp:form>
@@ -46,9 +44,7 @@
 							<xp:panel id="phonePanel">
 								<xp:messages id="messages" errorClass="alert alert-danger" />
 								<div class="form-group">
-									<strong>
-										<xp:text value="Phone Numbers" />
-									</strong>
+									<strong>Phone Numbers</strong>
 									<xp:button id="buttonAddPhone" styleClass="pull-right btn-default" rendered="#{contact.editMode}">
 										<xp:eventHandler event="onclick" action="#{contact.addPhoneNumber}" disableValidators="true"
 											refreshMode="partial" refreshId="phonePanel" />
