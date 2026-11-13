@@ -8,12 +8,20 @@
 				<span class="icon-bar" />
 				<span class="icon-bar" />
 			</button>
-			<xp:link styleClass="navbar-brand" value="/" text="#{database.title}" />
+			<xp:link styleClass="navbar-brand" value="/index.xsp" text="#{database.title}" />
 		</div>
 		<div class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li>
+					<xp:link text="Contacts" value="/index.xsp" />
+				</li>
+				<li>
+					<xp:link text="CRUD" value="/crud.xsp" />
+				</li>
+			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li>
-					<xp:link text=" New Contact" value="/contact.xsp">
+					<xp:link text="New Contact" value="/contact.xsp">
 						<i class="fa fa-plus-square fa-lg" />
 					</xp:link>
 				</li>
