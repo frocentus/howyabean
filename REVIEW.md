@@ -113,7 +113,7 @@ Also: XPages code compiled by newer DDE does not run on pre-FP8 servers regardle
 | `Comparator.comparing` | n/a | no sorting in code (view does it) |
 | `@FunctionalInterface` + `Function` registry | ✓ | `StructuredTypes.register(String, Function<Map<String,Object>,?>)` — the name→factory registry that replaces the old `Class.forName(...).newInstance()`; `toDominoFriendly`'s if/else chain (`DominoUtil.java:257-291`) could use the same shape |
 | `MethodHandle`/`Introspector` | ~ | `java.beans.Introspector` now in use in `AbstractSmartDocumentModel.java` (both jars and the exception hot path are gone); still `Method.invoke`, not `MethodHandle` |
-| `Class.newInstance()` | used (deprecated in 9+) | `DominoUtil.java:116,129` → `getDeclaredConstructor().newInstance()` |
+| `Class.newInstance()` | fixed | `DominoUtil.restoreJavaState` now calls `getDeclaredConstructor().newInstance()` (the old form is deprecated since Java 9); the legacy deserialization path is otherwise unchanged |
 
 ---
 

@@ -88,7 +88,6 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 		return unid;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void load(final String unid) {
 		setUnid(unid);
 		if (StringUtil.isEmpty(getUnid())) {
@@ -113,7 +112,7 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 			 * below. The MIME parts of the individual items join the same scope, so a
 			 * failed item does not leave a handle behind.
 			 */
-			Vector items = doc.getItems();
+			Vector<?> items = doc.getItems();
 			parts.add(items);
 			for (Object eachItem : items) {
 				if (!(eachItem instanceof Item)) {
@@ -158,7 +157,6 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 	 * Borrowed heavily from
 	 * https://github.com/OpenNTF/org.openntf.domino/blob/master/org.openntf.domino/src/org/openntf/domino/impl/Document.java
 	 */
-	@SuppressWarnings("unchecked")
 	protected Item replaceItemValue(final Document parent, final String itemName, final Object value) {
 		Item result = null;
 		boolean isNonSummary = false;
@@ -175,21 +173,16 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 				}
 				return null;
 			}
-			String noteid_ = parent.getNoteID();
-			if (value instanceof Collection || value instanceof Object[]) {
-				if (value instanceof Collection) {
-					if (((Collection) value).size() > MAX_NATIVE_VECTOR_SIZE) {
-						throw new IllegalArgumentException();
-					}
-				} else if (value instanceof Object[]) {
-					if (((Object[]) value).length > MAX_NATIVE_VECTOR_SIZE) {
-						throw new IllegalArgumentException();
-					}
+			if (value instanceof Collection<?> || value instanceof Object[]) {
+				Collection<?> listValue = value instanceof Collection<?>
+						? (Collection<?>) value
+						: Arrays.asList((Object[]) value);
+				if (listValue.size() > MAX_NATIVE_VECTOR_SIZE) {
+					throw new IllegalArgumentException();
 				}
 				Vector<Object> resultList = new Vector<>();
 				Class<?> objectClass = null;
 				long totalStringSize = 0;
-				Collection<?> listValue = value instanceof Collection ? (Collection<?>) value : Arrays.asList((Object[]) value);
 				for (Object valNode : listValue) {
 					Object domNode = DominoUtil.toDominoFriendly(valNode);
 					if (domNode != null) {

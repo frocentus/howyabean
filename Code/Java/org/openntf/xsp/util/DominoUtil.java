@@ -12,10 +12,8 @@ import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -51,7 +49,6 @@ public class DominoUtil {
 	 */
 	private static final int MAX_STORED_BYTES = 4 * 1024 * 1024;
 
-	@SuppressWarnings("unchecked")
 	public static void incinerate(final Object... objects) {
 		for (Object eachObject : objects) {
 			if (eachObject != null) {
@@ -62,15 +59,12 @@ public class DominoUtil {
 					} catch (NotesException e) {
 						// already recycled: nothing left to release
 					}
-				} else if (eachObject instanceof Map) {
-					Set<Map.Entry> entries = ((Map) eachObject).entrySet();
-					for (Map.Entry<?, ?> entry : entries) {
+				} else if (eachObject instanceof Map<?, ?>) {
+					for (Map.Entry<?, ?> entry : ((Map<?, ?>) eachObject).entrySet()) {
 						incinerate(entry.getKey(), entry.getValue());
 					}
-				} else if (eachObject instanceof Collection) {
-					Iterator i = ((Collection) eachObject).iterator();
-					while (i.hasNext()) {
-						Object obj = i.next();
+				} else if (eachObject instanceof Collection<?>) {
+					for (Object obj : (Collection<?>) eachObject) {
 						incinerate(obj);
 					}
 				} else if (eachObject.getClass().isArray()) {
@@ -224,7 +218,7 @@ public class DominoUtil {
 			// Serializable, and StateHolder, distinguished by type or header
 			if ("x-java-externalized-object".equals(entity.getContentSubType())) {
 				Class<Externalizable> externalizableClass = (Class<Externalizable>) Class.forName(javaClassName);
-				Externalizable restored = externalizableClass.newInstance();
+				Externalizable restored = externalizableClass.getDeclaredConstructor().newInstance();
 				restored.readExternal(objectStream);
 				result = restored;
 			} else {
@@ -235,7 +229,7 @@ public class DominoUtil {
 					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 					Class<?> stateHoldingClass = Class.forName(originalJavaClassValue);
 					Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
-					result = stateHoldingClass.newInstance();
+					result = stateHoldingClass.getDeclaredConstructor().newInstance();
 					restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
 				} else if (originalJavaClassValue != null && originalJavaClassValue.endsWith(".domino.DocumentCollection")) {
 					/*
