@@ -1,15 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.0" replicaid="85257C3A00267A39" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="23a" sequence="5" unid="71278063909B826B85257C52002A0225">
+<?xml version="1.0" encoding="utf-8" standalone="no"?><note xmlns="http://www.lotus.com/dxl" class="form" maintenanceversion="1.0" replicaid="C1258EAE005C7388" version="14.5">
+<noteinfo noteid="18a" sequence="7" unid="71278063909B826B85257C52002A0225">
 <created><datetime>20131231T023850,61-05</datetime></created>
-<modified><datetime>20131231T024008,63-05</datetime></modified>
-<revised><datetime>20131231T024008,62-05</datetime></revised>
-<lastaccessed><datetime>20131231T024008,63-05</datetime></lastaccessed>
-<addedtofile><datetime>20131231T023850,62-05</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
-<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<modified><datetime>20261113T180436,64+01</datetime></modified>
+<revised><datetime>20261113T180436,63+01</datetime></revised>
+<lastaccessed><datetime>20261113T180436,63+01</datetime></lastaccessed>
+<addedtofile><datetime>20261113T175726,51+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></updatedby>
+<wassignedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></wassignedby>
 <item name="$Flags"><text>34567Cg~[</text></item>
 <item name="$TITLE"><text>org/openntf/howyabean/model/PhoneNumber.java</text></item>
 <item name="$DesignerVersion"><text>8.5.3</text></item>
 
 
-<item name="$FileNames" sign="true"><text>org/openntf/howyabean/model/PhoneNumber.java</text></item></note>
+<item name="$FileNames" sign="true"><text>org/openntf/howyabean/model/PhoneNumber.java</text></item>
+
+
+</note>

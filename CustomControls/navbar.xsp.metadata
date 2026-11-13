@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.0" replicaid="85257C3A00267A39" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="21a" sequence="9" unid="47D707801D48026E85257C48007E06C7">
+<?xml version="1.0" encoding="utf-8" standalone="no"?><note xmlns="http://www.lotus.com/dxl" class="form" maintenanceversion="1.0" replicaid="C1258EAE005C7388" version="14.5">
+<noteinfo noteid="1c2" sequence="12" unid="47D707801D48026E85257C48007E06C7">
 <created><datetime>20131221T175632,71-05</datetime></created>
-<modified><datetime>20131221T175659,84-05</datetime></modified>
-<revised><datetime>20131221T175659,83-05</datetime></revised>
-<lastaccessed><datetime>20131221T175659,84-05</datetime></lastaccessed>
-<addedtofile><datetime>20131221T175632,72-05</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
-<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<modified><datetime>20261113T180436,62+01</datetime></modified>
+<revised><datetime>20261113T180436,61+01</datetime></revised>
+<lastaccessed><datetime>20261113T180436,61+01</datetime></lastaccessed>
+<addedtofile><datetime>20261113T175726,85+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></updatedby>
+<wassignedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></wassignedby>
 <item name="$Flags"><text>gC~4;</text></item>
 <item name="$TITLE"><text>navbar.xsp</text></item>
 
@@ -14,8 +14,8 @@
 <item name="$FileNames" sign="true"><text>navbar.xsp</text></item>
 
 
-<item name="$DesignerVersion"><text>8.5</text></item>
 
+<item name="$DesignerVersion"><text>8.5</text></item>
 
 
 

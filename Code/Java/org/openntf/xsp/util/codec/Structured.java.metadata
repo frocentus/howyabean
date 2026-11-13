@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><note xmlns="http://www.lotus.com/dxl" class="form" maintenanceversion="1.0" replicaid="C1258EAE005C7388" version="14.5">
+<noteinfo noteid="1ae" sequence="6" unid="25F564B8755C2F6CC1258EAE005D265A">
+<created><datetime>20261113T175726,66+01</datetime></created>
+<modified><datetime>20261113T180436,74+01</datetime></modified>
+<revised><datetime>20261113T180436,73+01</datetime></revised>
+<lastaccessed><datetime>20261113T180436,73+01</datetime></lastaccessed>
+<addedtofile><datetime>20261113T175726,75+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></updatedby>
+<wassignedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>org/openntf/xsp/util/codec/Structured.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>org/openntf/xsp/util/codec/Structured.java</text></item>
+
+
+</note>

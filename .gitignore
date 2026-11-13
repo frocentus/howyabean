@@ -1,0 +1,22 @@
+# Domino Designer / NSF build output
+WebContent/WEB-INF/classes/
+Code/dbscript.lsdb
+Local/
+*.class
+
+# Notes / Designer temporary files
+*.bak
+*~
+*.lck
+*.tmp
+*.log
+# Designer's per-project validation switch (suspend=true is a local state)
+.settings/org.eclipse.wst.validation.prefs
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
