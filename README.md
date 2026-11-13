@@ -19,7 +19,7 @@ file documents how the application and its storage layer work.
 | Domino server | 9.0.1 FP10+ (Java 8 runtime, and a Designer that compiles at 1.8), 10, 11 or 12. The sources target Java 8; the level is pinned in `.settings/org.eclipse.jdt.core.prefs`, so no Java 11+ syntax. |
 | Domino Designer | to open the ODP and sync it into an NSF. There is no build file; see [Building](#building). |
 | Extension Library | `com.ibm.xsp.extlib` (`xsp.library.depends` in `WebContent/WEB-INF/xsp.properties`). |
-| Third-party jar | `WebContent/WEB-INF/lib/msgpack-core-0.9.8.jar` (Apache 2.0), declared as a `lib` entry in `.classpath`. |
+| Third-party jar | `msgpack-core-0.9.8.jar` (Apache 2.0), a Java archive design element under `Code/Jars/` (with its `.metadata` companion). Designer puts it on the NSF build path itself, so `.classpath` must not list it again. |
 | Theme | `Resources/Themes/howyabean.theme` extends `bootswatch_united`; pages use Bootstrap 3 markup. |
 
 ## Layout
@@ -248,6 +248,10 @@ Details that bite:
 
 * `.classpath` is Designer-generated and is **not** a plain Eclipse build: `Code/Java` is
   not a classpath entry of its own and `Local` is a Designer-internal virtual folder.
+* Jars live in `Code/Jars/` as jar design elements, not as plain files in
+  `WebContent/WEB-INF/lib/`. Declaring one again as a `lib` entry in `.classpath` makes
+  Designer report *Build path contains duplicate entry*: the design element already
+  contributes `WebContent/WEB-INF/lib/<name>.jar` to the NSF project's build path.
 * `WebContent/WEB-INF/classes` is the compiler output directory (`.classpath`); it is not
   in the repository and should not be committed.
 * The compiler level is versioned in `.settings/org.eclipse.jdt.core.prefs`
