@@ -10,8 +10,7 @@
 		<div class="page-header">
 			<h1>Förderungen <small>Schulische Sport- und Projekttage</small></h1>
 			<p class="text-muted">
-				Prototyp des Backoffice: Anträge prüfen, Nachbesserung anfordern, bewilligen oder ablehnen.
-				Aktive Rolle: <strong><xp:text value="#{foerder.role}" /></strong>.
+				<xp:text value="#{javascript:'Prototyp des Backoffice: Anträge prüfen, Nachbesserung anfordern, bewilligen oder ablehnen. Aktive Rolle: ' + foerder.role + '.'}" />
 			</p>
 		</div>
 
@@ -20,6 +19,10 @@
 			<xp:link text="Genehmiger" value="/foerderungen.xsp?role=Genehmiger" styleClass="btn btn-default" />
 			<xp:link text="Finanzabteilung" value="/foerderungen.xsp?role=Finanzabteilung" styleClass="btn btn-default" />
 		</div>
+
+		<xp:button value="Demo-Daten ergänzen" id="seedMore" styleClass="btn btn-default btn-sm" style="margin-left: 10px;">
+			<xp:eventHandler event="onclick" submit="true" refreshMode="complete" action="#{javascript:foerder.seedMore();}" />
+		</xp:button>
 
 		<xp:panel rendered="#{!empty foerder.message}">
 			<div class="alert alert-info" style="margin-top: 15px;"><xp:text value="#{foerder.message}" /></div>
@@ -38,7 +41,7 @@
 				</xp:panel>
 
 				<p class="text-muted">
-					<xp:text value="#{foerder.count}" /> Anträge, bewilligt: <xp:text value="#{foerder.summeBewilligt}" /> EUR
+					<xp:text value="#{javascript:foerder.count + ' Anträge, bewilligt: ' + foerder.summeBewilligtText + ' EUR'}" />
 				</p>
 
 				<table class="table table-striped table-condensed">

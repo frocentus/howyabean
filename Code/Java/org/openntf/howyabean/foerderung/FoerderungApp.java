@@ -159,6 +159,98 @@ public class FoerderungApp implements Serializable {
 		}
 	}
 
+	public void seedMore() {
+		String[][] demos = {
+			{ "D1", "Maria Huber", "Huber Luis", "Volksschule Mattersburg", "Volksschule", "2", "1", "220", "1700", "1", "2", "0", "Eingereicht" },
+			{ "D2", "Stefan Berger", "Berger Emma", "Mittelschule Oberwart", "Mittelschule", "7", "0", "340", "3000", "2", "2", "0", "In Pruefung" },
+			{ "D3", "Andrea Weber", "Weber Noah", "Volksschule Neusiedl", "Volksschule", "4", "0", "180", "2100", "1", "1", "0", "In Pruefung" },
+			{ "D4", "Thomas Koenig", "Koenig Mia", "Gymnasium Eisenstadt", "Gymnasium (Unterstufe)", "8", "1", "520", "6400", "2", "3", "0", "Abgelehnt" },
+			{ "D5", "Julia Schuster", "Schuster Elias", "Mittelschule Guessing", "Mittelschule", "5", "1", "380", "2400", "1", "2", "1", "Bewilligt" },
+			{ "D6", "Anna Pichler", "Pichler Sophie", "Volksschule Eisenstadt", "Volksschule", "1", "0", "150", "1600", "1", "1", "0", "Nachbesserung" },
+			{ "D7", "Klaus Graf", "Graf Felix", "Polytechnische Schule Oberwart", "Politechnische Schule", "9", "0", "260", "2000", "1", "2", "0", "Eingereicht" },
+			{ "D8", "Petra Hoffmann", "Hoffmann Lena", "Mittelschule Oberpullendorf", "Mittelschule", "6", "0", "290", "3300", "2", "2", "0", "Bewilligt" },
+			{ "D9", "Michael Bauer", "Bauer Jonas", "Volksschule Jennersdorf", "Volksschule", "3", "1", "210", "2500", "2", "2", "0", "Eingereicht" },
+			{ "D10", "Sabine Richter", "Richter Marie", "Gymnasium Oberwart", "Gymnasium (Unterstufe)", "5", "0", "320", "1900", "1", "1", "0", "Eingereicht" } };
+		int added = 0;
+		try {
+			Database db = ExtLibUtil.getCurrentDatabase();
+			java.util.Set<String> existing = demoKeys(db);
+			for (String[] d : demos) {
+				if (existing.contains(d[0])) {
+					continue;
+				}
+				createDemo(db, d);
+				added++;
+			}
+			message = added == 0 ? "Demo-Anträge waren bereits vorhanden." : added + " Demo-Anträge ergänzt.";
+		} catch (NotesException e) {
+			message = "Demo-Daten konnten nicht ergänzt werden: " + e.getMessage();
+		}
+	}
+
+	private java.util.Set<String> demoKeys(Database db) throws NotesException {
+		java.util.Set<String> keys = new java.util.HashSet<String>();
+		DocumentCollection all = db.getAllDocuments();
+		Document doc = all.getFirstDocument();
+		while (doc != null) {
+			Document next = all.getNextDocument(doc);
+			if (FORM.equals(doc.getItemValueString("Form"))) {
+				String key = doc.getItemValueString("demoKey");
+				if (key != null && !key.isEmpty()) {
+					keys.add(key);
+				}
+			}
+			doc.recycle();
+			doc = next;
+		}
+		return keys;
+	}
+
+	private void createDemo(Database db, String[] d) throws NotesException {
+		String status = d[12];
+		int level = Integer.parseInt(d[5]);
+		boolean winter = "1".equals(d[6]);
+		double costs = Double.parseDouble(d[7]);
+		double income = Double.parseDouble(d[8]);
+		int adults = Integer.parseInt(d[9]);
+		int children = Integer.parseInt(d[10]);
+		boolean multiple = "1".equals(d[11]);
+		int stufe = stage(income, adults, children);
+		Document doc = db.createDocument();
+		try {
+			doc.replaceItemValue("Form", FORM);
+			doc.replaceItemValue("demoKey", d[0]);
+			doc.replaceItemValue("status", status);
+			doc.replaceItemValue("applicant", d[1]);
+			doc.replaceItemValue("child", d[2]);
+			doc.replaceItemValue("school", d[3]);
+			doc.replaceItemValue("schoolType", d[4]);
+			doc.replaceItemValue("level", level);
+			doc.replaceItemValue("winter", winter ? "1" : "0");
+			doc.replaceItemValue("costs", costs);
+			doc.replaceItemValue("income", income);
+			doc.replaceItemValue("adults", adults);
+			doc.replaceItemValue("children", children);
+			doc.replaceItemValue("multiple", multiple ? "1" : "0");
+			doc.replaceItemValue("created", now());
+			doc.replaceItemValue("stage", stufe);
+			double betrag = 0;
+			if (S_BEWILLIGT.equals(status)) {
+				betrag = amount(stufe, level, winter, multiple);
+				doc.replaceItemValue("decided", now());
+				doc.appendItemValue("history", now() + " | Demo | Bewilligt: Stufe " + stufe + ", " + money(betrag));
+			} else {
+				doc.appendItemValue("history", now() + " | Demo | Eingang erfasst");
+			}
+			doc.replaceItemValue("amount", betrag);
+			if (S_NACHBESSERUNG.equals(status)) {
+				doc.replaceItemValue("due", dueInDays(7));
+			}
+			doc.save();
+		} finally {
+			doc.recycle();
+		}
+	}
 	private void createApplication(Database db, String applicant, String child, String school,
 			String type, int level, boolean winter, double costs, double income, int adults,
 			int children, boolean multiple) throws NotesException {
@@ -318,6 +410,10 @@ public class FoerderungApp implements Serializable {
 			if (S_BEWILLIGT.equals(a.getStatus())) sum += a.getAmount();
 		}
 		return round2(sum);
+	}
+
+	public String getSummeBewilligtText() {
+		return String.format("%.2f", getSummeBewilligt());
 	}
 
 	// ------------------------------------------------------------- value
