@@ -21,7 +21,7 @@ built-in `xp:dominoDocument` data source.
 | Area | Files |
 |---|---|
 | Pages | `XPages/index.xsp` (list + pager), `XPages/contact.xsp` (detail/editor), `XPages/crud.xsp` (list+detail combined) |
-| Custom control | `CustomControls/contactList.xsp` (+ `.xsp-config`, `xc:contactList`: list, pager and delete for both pages) and `CustomControls/navbar.xsp` (+ `.xsp-config` composite component `navbar`, prefix `xc`) |
+| Custom control | `CustomControls/contactList.xsp` (+ `.xsp-config`, `xc:contactList`: list, pager and delete for both pages), `CustomControls/contactEditor.xsp` (+ `.xsp-config`, `xc:contactEditor`: the one editor form both pages use) and `CustomControls/navbar.xsp` (+ `.xsp-config` composite component `navbar`, prefix `xc`) |
 | Java | `Code/Java/org/openntf/howyabean/model/{ContactModel,PhoneNumber}.java`, `Code/Java/org/openntf/xsp/model/{AbstractMapModel,AbstractDocumentMapModel,AbstractSmartDocumentModel}.java`, `Code/Java/org/openntf/xsp/util/{DominoUtil,LogUtil}.java` |
 | Data | `Forms/contact.form`, `Views/contacts.view` (selection `Form = "contact"`, 2 columns, programmatic names `lastName` + `firstName`, collation lastName/firstName + `$Conflict`, `$REF`) |
 | Config | `WebContent/WEB-INF/faces-config.xml` (bean `contact`, view scope), `xsp.properties`, `plugin.xml`, `Resources/Themes/howyabean.theme` (extends `bootswatch_united`), `Resources/StyleSheets/howyabean.css` |

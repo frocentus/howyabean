@@ -29,6 +29,7 @@ file documents how the application and its storage layer work.
 | `XPages/index.xsp` | Contact list with a pager, rendered from the `contacts` view. |
 | `XPages/contact.xsp` | Detail/editor page; reads the UNID from `?id=`, saves via `#{contact.save}`. |
 | `XPages/crud.xsp` | List and editor combined on one page. |
+| `CustomControls/contactEditor.xsp` | Shared editor (`xc:contactEditor`): the fields, the phone book with add/remove, save and edit. Used by `contact.xsp` and `crud.xsp`, so both forms stay identical. |
 | `CustomControls/contactList.xsp` | Shared contact list (`xc:contactList`): `layout="names"` for the sidebar, `layout="table"` for the crud page; owns the view data source, the pager and the delete action. |
 | `CustomControls/navbar.xsp` | Navigation bar (composite component `xc:navbar`). |
 | `Code/Java/org/openntf/howyabean/model/` | `ContactModel` (the bean the pages bind to), `PhoneNumber` (one repeat row). |
