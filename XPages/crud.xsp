@@ -27,7 +27,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<xp:repeat var="eachContact" value="#{contacts}">
+								<xp:repeat id="repeatContacts" var="eachContact" value="#{contacts}" rows="5">
 									<tr>
 										<td>
 											<xp:text value="#{eachContact.firstName}" />
@@ -51,6 +51,18 @@
 								</xp:repeat>
 							</tbody>
 						</table>
+						<ul class="nav nav-pills nav-justified">
+							<li>
+								<xp:pager id="pagerContactsPrevious" for="repeatContacts" partialRefresh="true">
+									<xp:pagerControl type="Previous" id="pagerControlPrevious" value="Previous" />
+								</xp:pager>
+							</li>
+							<li>
+								<xp:pager id="pagerContactsNext" for="repeatContacts" partialRefresh="true">
+									<xp:pagerControl type="Next" id="pagerControlNext" value="Next" />
+								</xp:pager>
+							</li>
+						</ul>
 					</xp:div>
 				</div>
 			</div>

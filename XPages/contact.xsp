@@ -2,7 +2,6 @@
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
 	<xc:navbar />
 	<xp:div id="uiContainer" styleClass="container">
-		<xp:messages id="messages" errorClass="alert alert-danger" />
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel panel-default">
@@ -44,42 +43,47 @@
 									</xp:this.converter>
 								</xp:inputText>
 							</div>
-							<div class="form-group">
-								<strong>
-									<xp:text value="Phone Numbers" />
-								</strong>
-								<xp:button id="buttonAddPhone" styleClass="pull-right btn-default" rendered="#{contact.editMode}">
-									<xp:eventHandler event="onclick" action="#{contact.addPhoneNumber}" refreshMode="partial" refreshId="uiContainer" />
-									<i class="fa fa-plus" />
-								</xp:button>
-								<div class="clearfix" />
-							</div>
-							<xp:repeat var="eachPhone" value="#{contact.phoneBook}">
-								<div class="row">
-									<div class="col-md-4">
-										<div class="form-group">
-											<xp:comboBox value="#{eachPhone.category}">
-												<xp:selectItem itemLabel="Work" />
-												<xp:selectItem itemLabel="Home" />
-												<xp:selectItem itemLabel="Mobile" />
-											</xp:comboBox>
+							<xp:panel id="phonePanel">
+								<xp:messages id="messages" errorClass="alert alert-danger" />
+								<div class="form-group">
+									<strong>
+										<xp:text value="Phone Numbers" />
+									</strong>
+									<xp:button id="buttonAddPhone" styleClass="pull-right btn-default" rendered="#{contact.editMode}">
+										<xp:eventHandler event="onclick" action="#{contact.addPhoneNumber}" disableValidators="true"
+											refreshMode="partial" refreshId="phonePanel" />
+										<i class="fa fa-plus" />
+									</xp:button>
+									<div class="clearfix" />
+								</div>
+								<xp:repeat var="eachPhone" value="#{contact.phoneBook}">
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<xp:comboBox value="#{eachPhone.category}">
+													<xp:selectItem itemLabel="Work" />
+													<xp:selectItem itemLabel="Home" />
+													<xp:selectItem itemLabel="Mobile" />
+												</xp:comboBox>
+											</div>
 										</div>
-									</div>
-									<div class="col-md-8">
-										<div class="form-group">
-											<div class="input-group">
-												<xp:inputText id="digits" value="#{eachPhone.digits}" />
-												<span class="input-group-btn">
-													<xp:button id="buttonRemovePhone" styleClass="btn-default" rendered="#{contact.editMode}">
-														<xp:eventHandler event="onclick" action="#{contact.removePhoneNumber}" refreshMode="partial" refreshId="uiContainer" />
-														<i class="fa fa-lg fa-minus" />
-													</xp:button>
-												</span>
+										<div class="col-md-8">
+											<div class="form-group">
+												<div class="input-group">
+													<xp:inputText id="digits" value="#{eachPhone.digits}" />
+													<span class="input-group-btn">
+														<xp:button id="buttonRemovePhone" styleClass="btn-default" rendered="#{contact.editMode}">
+															<xp:eventHandler event="onclick" action="#{contact.removePhoneNumber}" disableValidators="true"
+																refreshMode="partial" refreshId="phonePanel" />
+															<i class="fa fa-lg fa-minus" />
+														</xp:button>
+													</span>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-							</xp:repeat>
+								</xp:repeat>
+							</xp:panel>
 							<xp:button id="buttonSaveContact" styleClass="pull-right btn-success" value=" Save" rendered="#{contact.editMode}">
 								<xp:eventHandler event="onclick" action="#{contact.save}" refreshMode="partial" refreshId="uiContainer" />
 								<i class="fa fa-lg fa-save" />
