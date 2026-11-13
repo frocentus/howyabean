@@ -38,11 +38,6 @@
       <property-name>refreshTarget</property-name>
       <property-class>string</property-class>
     </property>
-    <property>
-      <description>Additional client ids to refresh in sequence after a delete, separated by spaces. Empty refreshes nothing extra.</description>
-      <property-name>refreshAlso</property-name>
-      <property-class>string</property-class>
-    </property>
     <composite-extension>
       <designer-extension>
         <in-palette>true</in-palette>

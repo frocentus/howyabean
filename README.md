@@ -29,8 +29,8 @@ file documents how the application and its storage layer work.
 | `XPages/index.xsp` | Contact list with a pager, rendered from the `contacts` view. |
 | `XPages/contact.xsp` | Detail/editor page; reads the UNID from `?id=`, saves via `#{contact.save}`. |
 | `XPages/crud.xsp` | List and editor combined on one page. |
-| `CustomControls/contactEditor.xsp` | Shared editor (`xc:contactEditor`): the fields, the phone book with add/remove, save and edit. Used by `contact.xsp` and `crud.xsp`, so both forms stay identical. `refreshTarget` names the client id of the region a save or edit should refresh (usually a wrapper that contains the messages control); empty means the editor itself. `refreshAlso` lists further **client** ids (pass them as `#{id:...}`) that `howyabean.refreshAreas` reloads one after another (`XSP.partialRefreshGet`, with `XSP.allowSubmit()` between them). |
-| `CustomControls/contactList.xsp` | Shared contact list (`xc:contactList`): `layout="names"` for the sidebar, `layout="table"` for the crud page; owns the view data source, the pager and the delete action. `refreshTarget` does the same for a delete, and `refreshAlso` the same for additional regions. |
+| `CustomControls/contactEditor.xsp` | Shared editor (`xc:contactEditor`): the fields, the phone book with add/remove, save and edit. Used by `contact.xsp` and `crud.xsp`, so both forms stay identical. `refreshTarget` names the client id of the region a save or edit should refresh (usually a wrapper that contains the messages control); empty means the editor itself. |
+| `CustomControls/contactList.xsp` | Shared contact list (`xc:contactList`): `layout="names"` for the sidebar, `layout="table"` for the crud page; owns the view data source, the pager and the delete action. `refreshTarget` does the same for a delete. |
 | `CustomControls/navbar.xsp` | Navigation bar (composite component `xc:navbar`). |
 | `Code/Java/org/openntf/howyabean/model/` | `ContactModel` (the bean the pages bind to), `PhoneNumber` (one repeat row). |
 | `Code/Java/org/openntf/xsp/model/` | `AbstractMapModel` → `AbstractDocumentMapModel` → `AbstractSmartDocumentModel`, the three-layer model. |
@@ -295,6 +295,12 @@ hand-edit.
 
 ## Known limitations
 
+* A partial refresh has **one** target. Chaining smaller refreshes from the client
+  (`XSP.partialRefreshGet`) only works for components the server maps without a nested
+  container: in the Designer preview `view:_id1:listPanel` answered
+  `CLFAD0376E: No component found with ID`, while `view:uiContainer` worked. `crud.xsp`
+  therefore refreshes its `uiContainer` in one request; `contact.xsp` and `index.xsp`
+  refresh one small region each (`editorRegion`, `listRegion`).
 * The phone book is **one opaque MIME part**. Views, full-text search, agents and conflict
   handling cannot see individual numbers, and two editors overwrite each other's rows.
   Making it viewable (parallel `phoneCategory`/`phoneDigits` items) stays inside the model's
