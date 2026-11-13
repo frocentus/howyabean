@@ -18,9 +18,6 @@
 				<li>
 					<xp:link text="CRUD" value="/crud.xsp" />
 				</li>
-				<li>
-					<xp:link text="Förderungen" value="/foerderungen.xsp" />
-				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li>
