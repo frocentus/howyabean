@@ -10,7 +10,7 @@
 						<h3 class="panel-title">My Contacts</h3>
 					</div>
 					<xp:div id="listPanel" styleClass="panel-body">
-						<xc:contactList layout="table" rows="5" showPager="true" showEdit="true" editPage="/crud.xsp" refreshTarget="listPanel" refreshAlso="messages" />
+						<xc:contactList layout="table" rows="5" showPager="true" showEdit="true" editPage="/crud.xsp" refreshTarget="listPanel" refreshAlso="#{id:messages}" />
 					</xp:div>
 				</div>
 			</div>
@@ -21,7 +21,7 @@
 					</div>
 					<div class="panel-body">
 						<xp:div id="editorPanel">
-							<xc:contactEditor refreshTarget="editorPanel" refreshAlso="listPanel messages" />
+							<xc:contactEditor refreshTarget="editorPanel" refreshAlso="#{id:listPanel} #{id:messages}" />
 						</xp:div>
 					</div>
 				</div>
