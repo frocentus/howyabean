@@ -27,7 +27,7 @@ import com.ibm.xsp.extlib.util.ExtLibUtil;
  * Roles are a demo switch for the prototype: Sachbearbeiter (inspect, request a
  * correction), Genehmiger (approve, reject), Finanzabteilung (batch, release).
  */
-public class FoerderungApp implements Serializable {
+public class FoerderungApp implements Serializable { 
 
 	private static final long serialVersionUID = 1L;
 	public static final String FORM = "FoerderAntrag";

@@ -11,7 +11,7 @@
 			<h1>Förderungen <small>Schulische Sport- und Projekttage</small></h1>
 			<p class="text-muted">
 				Prototyp des Backoffice: Anträge prüfen, Nachbesserung anfordern, bewilligen oder ablehnen.
-				Aktive Rolle: <strong>#{foerder.role}</strong>.
+				Aktive Rolle: <strong><xp:text value="#{foerder.role}" /></strong>.
 			</p>
 		</div>
 
@@ -22,9 +22,9 @@
 		</div>
 
 		<xp:panel rendered="#{!empty foerder.message}">
-			<div class="alert alert-info" style="margin-top: 15px;">#{foerder.message}</div>
+			<div class="alert alert-info" style="margin-top: 15px;"><xp:text value="#{foerder.message}" /></div>
 		</xp:panel>
-
+ 
 		<div class="row" style="margin-top: 15px;">
 			<div class="col-md-12">
 				<xp:panel rendered="#{foerder.count == 0}">
@@ -80,7 +80,7 @@
 									<xp:text value="#{a.amountText}" />
 								</td>
 								<td>
-									<span class="#{a.status == 'Bewilligt' ? 'label label-success' : (a.status == 'Abgelehnt' or a.status == 'Storniert' ? 'label label-danger' : 'label label-default')}">#{a.status}</span>
+									<xp:text value="#{a.status}" styleClass="#{a.status == 'Bewilligt' ? 'label label-success' : (a.status == 'Abgelehnt' or a.status == 'Storniert' ? 'label label-danger' : 'label label-default')}" />
 									<xp:panel rendered="#{a.status == 'Nachbesserung'}">
 										<xp:text styleClass="text-muted small" value="#{a.due}" />
 									</xp:panel>
