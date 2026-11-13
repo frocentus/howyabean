@@ -35,8 +35,8 @@
 													<i class="fa fa-lg fa-pencil" />
 												</xp:link>
 												<xp:link styleClass="btn btn-danger">
-													<xp:eventHandler event="onclick" action="#{javascript:eachContact.getDocument().remove(true);}" refreshMode="partial"
-														refreshId="contactListContainer" />
+													<xp:eventHandler event="onclick" action="#{javascript:contact.deleteContact(eachContact.getUniversalID());}"
+														disableValidators="true" refreshMode="partial" refreshId="uiContainer" />
 													<i class="fa fa-lg fa-trash-o" />
 												</xp:link>
 											</div>
