@@ -194,7 +194,7 @@ Domino handles (`Document`, `Item`, `MIMEEntity`, `Stream`, …) must be recycle
 scopes instead of `finally` blocks:
 
 ```java
-try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of()) {
+try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
     MIMEEntity entity = parts.own(doc.getMIMEEntity(itemName));
     Stream stream = parts.own(session.createStream());
     ...

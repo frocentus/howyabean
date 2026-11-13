@@ -68,7 +68,7 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 		 * for the rest of the request - and Recycle releases the part and the header.
 		 * Notice that the scope nests: DominoUtil.restoreState opens its own.
 		 */
-		try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of()) {
+		try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
 			MIMEEntity entity = parts.own(parent.getMIMEEntity(name));
 			if (entity == null) {
 				return null;

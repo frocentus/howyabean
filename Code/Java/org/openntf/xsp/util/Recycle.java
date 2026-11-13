@@ -12,7 +12,7 @@ import lotus.domino.NotesException;
  * declare which handles it takes and never write a {@code finally} for them:
  * 
  * <pre>
- * try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of(entity)) {
+ * try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of(entity)) {
  * 	Stream stream = parts.own(session.createStream());
  * 	...
  * }

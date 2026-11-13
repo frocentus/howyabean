@@ -14,7 +14,7 @@ import lotus.domino.Session;
  * </p>
  * 
  * <pre>
- * try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of()) {
+ * try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
  * 	...
  * }
  * </pre>
@@ -37,7 +37,7 @@ public final class MimeScope implements AutoCloseable {
 	}
 
 	/** Turns conversion off and keeps the previous setting to restore on close. */
-	public static MimeScope off(final Session session) throws NotesException {
+	public static MimeScope conversionOff(final Session session) throws NotesException {
 		return new MimeScope(session);
 	}
 

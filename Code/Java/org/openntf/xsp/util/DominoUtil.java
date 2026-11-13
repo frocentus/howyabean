@@ -184,7 +184,7 @@ public class DominoUtil {
 		 * the parts are recycled while conversion is still off, and only then is the
 		 * session put back.
 		 */
-		try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of()) {
+		try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
 			MIMEEntity entity = parts.own(doc.getMIMEEntity(itemName));
 			if (entity == null) {
 				return null;
@@ -291,7 +291,7 @@ public class DominoUtil {
 			}
 			objectStream.flush();
 		}
-		try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of()) {
+		try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
 			Stream mimeStream = parts.own(session.createStream());
 			MIMEEntity entity = parts.own(doc.getMIMEEntity(itemName));
 			if (entity == null) {
@@ -336,7 +336,7 @@ public class DominoUtil {
 	 */
 	public static void saveEncoded(final Document doc, final String itemName, final ValueCodecs.Encoded encoded) throws Exception {
 		Session session = ExtLibUtil.getCurrentSession();
-		try (MimeScope mime = MimeScope.off(session); Recycle parts = Recycle.of()) {
+		try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
 			Stream mimeStream = parts.own(session.createStream());
 			MIMEEntity entity = parts.own(doc.getMIMEEntity(itemName));
 			if (entity == null) {
