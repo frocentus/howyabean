@@ -311,7 +311,8 @@ public class FoerderungApp implements Serializable {
 				appendHistory(doc, "Nachbesserung eingelangt");
 				break;
 			case "bewilligen": {
-				int stufe = (int) doc.getItemValueDouble("stage");
+				int stufe = stage(doc.getItemValueDouble("income"),
+						(int) doc.getItemValueDouble("adults"), (int) doc.getItemValueDouble("children"));
 				if (stufe < 1) {
 					message = "Keine Förderstufe – Einkommen über der Grenze, bitte ablehnen.";
 					return;
@@ -349,6 +350,29 @@ public class FoerderungApp implements Serializable {
 		}
 	}
 
+	public void updateDerived(String unid) {
+		Document doc = null;
+		try {
+			if (unid == null || unid.isEmpty()) {
+				return;
+			}
+			doc = ExtLibUtil.getCurrentDatabase().getDocumentByUNID(unid);
+			if (doc == null) {
+				return;
+			}
+			int stufe = stage(doc.getItemValueDouble("income"),
+					(int) doc.getItemValueDouble("adults"), (int) doc.getItemValueDouble("children"));
+			doc.replaceItemValue("stage", stufe);
+			if (!S_BEWILLIGT.equals(doc.getItemValueString("status"))) {
+				doc.replaceItemValue("amount", 0);
+			}
+			doc.save();
+		} catch (NotesException e) {
+			message = "Nachberechnung fehlgeschlagen: " + e.getMessage();
+		} finally {
+			recycle(doc);
+		}
+	}
 	private boolean allowed(String action) {
 		switch (action) {
 		case "pruefen":

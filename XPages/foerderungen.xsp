@@ -61,7 +61,7 @@
 						<xp:repeat var="a" value="#{foerder.antraege}">
 							<tr>
 								<td>
-									<xp:text value="#{a.applicant}" />
+									<xp:link value="/foerderung.xsp?unid=#{a.unid}" text="#{a.applicant}" />
 									<br />
 									<xp:text styleClass="text-muted small" value="#{a.created}" />
 								</td>
