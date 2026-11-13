@@ -126,6 +126,13 @@ an exception. Objects are rebuilt afterwards, and only through the
 [`StructuredTypes`](Code/Java/org/openntf/xsp/util/codec/StructuredTypes.java) allow-list
 the application filled in.
 
+Failures are loud. A stored value that cannot be decoded (corrupt payload, unknown scheme,
+unregistered type) marks the document as partially loaded, the page shows that, and `save()`
+refuses to write it back instead of replacing the unreadable item with a default. If a codec
+accepts a value but fails to encode it, the save fails as well; there is no fallback to Java
+serialization for a value a codec was chosen for, and a failed item write aborts the save
+before `Document.save()` runs.
+
 ### Legacy documents
 
 Values written by the original demo are Java-serialized MIME parts

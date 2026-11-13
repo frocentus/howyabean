@@ -92,15 +92,38 @@ public class DominoUtil {
 		header.setHeaderVal(value);
 	}
 
+	/**
+	 * Removes a header if it exists. A part that changes format must not keep the marker of
+	 * the format it used to hold: the reader dispatches on those headers.
+	 */
+	private static void removeHeader(final MIMEEntity entity, final String name, final Recycle parts) throws NotesException {
+		MIMEHeader header = parts.own(entity.getNthHeader(name));
+		if (header != null) {
+			header.remove();
+		}
+	}
+
 	private static ObjectInputStream objectStream(final byte[] payload) throws IOException {
 		return new ObjectInputStream(new ByteArrayInputStream(payload));
 	}
 
 	/** The bytes of a MIME part, owned by the scope. */
-	private static byte[] readPayload(final Session session, final MIMEEntity entity, final Recycle parts) throws NotesException {
+	private static byte[] readPayload(final Session session, final MIMEEntity entity, final Recycle parts)
+			throws NotesException, IOException {
 		Stream mimeStream = parts.own(session.createStream());
 		entity.getContentAsBytes(mimeStream);
-		ByteArrayOutputStream contents = new ByteArrayOutputStream();
+		/*
+		 * The length is checked before the bytes are copied. getContents writes the whole
+		 * stream into the byte array and toByteArray duplicates it, so asking first is the
+		 * only way to keep a large item - compressed or not - from being copied twice on
+		 * the heap before any limit applies.
+		 */
+		long size = mimeStream.getBytes();
+		if (size > MAX_STORED_BYTES) {
+			throw new IOException("The stored item is " + size + " bytes, more than the " + MAX_STORED_BYTES
+					+ "-byte limit; refusing to read it");
+		}
+		ByteArrayOutputStream contents = new ByteArrayOutputStream((int) size);
 		mimeStream.getContents(contents);
 		return contents.toByteArray();
 	}
@@ -148,7 +171,14 @@ public class DominoUtil {
 	 * cannot disagree about what "a stored object" is.
 	 */
 	public static boolean isStoredObject(final MIMEEntity entity, final Recycle parts) throws NotesException {
-		if (ValueCodecs.byScheme(headerValue(entity, "X-Storage-Scheme", parts)) != null) {
+		/*
+		 * Any X-Storage-Scheme marks a stored value, including a scheme this build does not
+		 * know: treating an unknown scheme as an ordinary attachment would hide an
+		 * unreadable value behind the wrapped-document fallback, and the reader would try
+		 * Java deserialization on bytes that are not a Java stream.
+		 */
+		String storageScheme = headerValue(entity, "X-Storage-Scheme", parts);
+		if (storageScheme != null && !storageScheme.isEmpty()) {
 			return true;
 		}
 		String contentType = headerValue(entity, "Content-Type", parts);
@@ -189,6 +219,16 @@ public class DominoUtil {
 				 * and everything else is a map, a list or a scalar.
 				 */
 				return codec.decode(payload);
+			}
+			/*
+			 * No codec for the scheme: either a legacy form (StateHolder, or no scheme at
+			 * all with a java-serialized content type), or a format this build does not
+			 * know. The latter is a hard failure - reading it as a Java stream would turn
+			 * an unreadable value into a decoding error somewhere else.
+			 */
+			if (storageScheme != null && !storageScheme.isEmpty() && !"StateHolder".equals(storageScheme)) {
+				throw new IllegalArgumentException("No codec is registered for the storage scheme '" + storageScheme
+						+ "', so the " + itemName + " item cannot be read");
 			}
 			return restoreJavaState(doc, entity, parts, payload, storageScheme);
 		}
@@ -289,6 +329,12 @@ public class DominoUtil {
 			}
 			mimeStream.setContents(new ByteArrayInputStream(byteStream.toByteArray()));
 			entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+			/*
+			 * A part that used to hold a codec payload keeps its scheme and type headers;
+			 * the next read would hand the new Java stream to the codec.
+			 */
+			removeHeader(entity, "X-Storage-Scheme", parts);
+			removeHeader(entity, "X-Original-Java-Class", parts);
 			MIMEHeader javaClass = parts.own(entity.getNthHeader("X-Java-Class"));
 			if (javaClass == null) {
 				javaClass = parts.own(entity.createHeader("X-Java-Class"));
@@ -338,6 +384,13 @@ public class DominoUtil {
 			}
 			mimeStream.setContents(new ByteArrayInputStream(encoded.payload()));
 			entity.setContentFromBytes(mimeStream, encoded.contentType(), MIMEEntity.ENC_NONE);
+			/*
+			 * A part that used to hold a legacy Java-serialized value keeps its gzip
+			 * content-encoding and its Java class header. The new body is uncompressed, so
+			 * a reader that trusts Content-Encoding would try to inflate plain bytes.
+			 */
+			removeHeader(entity, "Content-Encoding", parts);
+			removeHeader(entity, "X-Java-Class", parts);
 			setHeader(entity, "X-Storage-Scheme", encoded.scheme(), parts);
 			setHeader(entity, "X-Original-Java-Class", encoded.type(), parts);
 		}

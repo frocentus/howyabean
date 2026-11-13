@@ -44,6 +44,13 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 
 	private String unid;
 
+	/**
+	 * Why the last {@link #load(String)} could not read the document, or {@code null}.
+	 * {@link #save()} refuses to write while this is set: a half-loaded model would write
+	 * its defaults over the items that could not be read.
+	 */
+	private String loadError;
+
 	public AbstractDocumentMapModel() {
 		String documentId = ExtLibUtil.readParameter(FacesContext.getCurrentInstance(), "id");
 		if (StringUtil.isNotEmpty(documentId)) {
@@ -57,7 +64,7 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 	 * Borrowed heavily from
 	 * https://github.com/OpenNTF/org.openntf.domino/blob/master/org.openntf.domino/src/org/openntf/domino/impl/Document.java
 	 */
-	private Object getItemValueMIME(final Document parent, final String name) {
+	private Object getItemValueMIME(final Document parent, final String name) throws Exception {
 		Session session = ExtLibUtil.getCurrentSession();
 		/*
 		 * MIME conversion has to be off to read the raw part. MimeScope restores the
@@ -67,17 +74,16 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 		 */
 		try (MimeScope mime = MimeScope.conversionOff(session); Recycle parts = Recycle.of()) {
 			MIMEEntity entity = parts.own(parent.getMIMEEntity(name));
-			if (entity == null) {
+			if (entity == null || !DominoUtil.isStoredObject(entity, parts)) {
 				return null;
 			}
-			if (DominoUtil.isStoredObject(entity, parts)) {
-				// A value this class wrote, in one of the formats it knows how to read
-				return DominoUtil.restoreState(parent, name);
-			}
-			return null;
-		} catch (Exception e) {
-			LogUtil.trace(e);
-			return null;
+			/*
+			 * A stored value that cannot be decoded is not "an ordinary MIME part": the
+			 * failure propagates so that load() can record it, because falling back to the
+			 * wrapped-document value would let the next save overwrite the item with a
+			 * default.
+			 */
+			return DominoUtil.restoreState(parent, name);
 		}
 	}
 
@@ -86,6 +92,7 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 	}
 
 	public void load(final String unid) {
+		loadError = null;
 		setUnid(unid);
 		if (StringUtil.isEmpty(getUnid())) {
 			return;
@@ -119,25 +126,42 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 				if (IGNORED_ITEMS.contains(itemName)) {
 					continue;
 				}
-				Object value = null;
-				if (parts.own(doc.getMIMEEntity(itemName)) != null) {
-					value = getItemValueMIME(doc, itemName);
-				}
-				if (value == null) {
+				try {
+					Object value = null;
+					if (parts.own(doc.getMIMEEntity(itemName)) != null) {
+						value = getItemValueMIME(doc, itemName);
+					}
+					if (value == null) {
+						/*
+						 * Either it is not a MIME item at all, or it is a MIME part that is
+						 * not a stored object (a body or an attachment). Fall back to the
+						 * wrapped document so a readable item is never replaced by null,
+						 * which would be written back as an empty value on save.
+						 */
+						value = wrappedDoc.getValue(itemName);
+					}
+					if (value != null) {
+						setValue(itemName, value);
+					}
+				} catch (Exception itemError) {
 					/*
-					 * Either it is not a MIME item at all, or it is a MIME part that is not
-					 * a stored object (a body or an attachment). Fall back to the wrapped
-					 * document so a readable item is never replaced by null, which would be
-					 * written back as an empty value on save.
+					 * Record the failure and stop reading this item, but keep the rest: the
+					 * model stays usable for display, and save() refuses to write it back.
 					 */
-					value = wrappedDoc.getValue(itemName);
-				}
-				if (value != null) {
-					setValue(itemName, value);
+					loadError = "The '" + itemName + "' item could not be read";
+					LogUtil.trace(itemError);
 				}
 			}
 		} catch (Exception e) {
+			loadError = "The document could not be read";
 			LogUtil.trace(e);
+		}
+		if (loadError != null) {
+			/*
+			 * Say it on the page, not only in the log: the fields show defaults, and a
+			 * reader must know that the next save will be refused.
+			 */
+			addErrorMessage("The document could not be read completely: " + loadError + ". Saving is disabled.");
 		}
 	}
 
@@ -226,10 +250,16 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 						result.setSummary(false);
 					}
 				} catch (NotesException nativeError) {
-					LogUtil.debug("Native error occured when replacing " + itemName + " item on doc " + getUnid() + " with a value of type "
-							+ (domNode == null ? "null" : domNode.getClass().getName()) + " of value " + String.valueOf(domNode));
+					/*
+					 * The item was removed above and could not be written again; aborting
+					 * here means save() never calls doc.save(), so the deletion stays
+					 * in-memory and the document keeps its previous value.
+					 */
+					throw new IllegalStateException("The " + itemName + " item of document " + getUnid()
+							+ " could not be written: " + nativeError.getMessage(), nativeError);
+				} finally {
+					DominoUtil.incinerate(domNode);
 				}
-				DominoUtil.incinerate(domNode);
 			}
 		} catch (IllegalArgumentException iae) {
 			/*
@@ -243,9 +273,13 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 					DominoUtil.saveEncoded(parent, itemName, ValueCodecs.encode(value));
 					return null;
 				} catch (Exception encodeError) {
-					LogUtil.debug("Could not store the " + itemName + " item of doc " + getUnid() + " as " + codec.scheme()
-							+ "; falling back to Java serialization");
-					LogUtil.trace(encodeError);
+					/*
+					 * No serialization fallback: the codec was chosen for this value, so its
+					 * type and size limits are the contract. A failure has to stop the save,
+					 * not produce a part the codec cannot read back.
+					 */
+					throw new IllegalStateException("The " + itemName + " item of document " + getUnid()
+							+ " could not be stored as " + codec.scheme() + ": " + encodeError.getMessage(), encodeError);
 				}
 			}
 			// Then try serialization
@@ -292,20 +326,21 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 							DominoUtil.saveState(state, parent, itemName, true, headers);
 							result = null;
 						} else {
-							// Well, we tried.
-							throw iae;
+							throw new IllegalArgumentException("A value of type " + value.getClass().getName()
+									+ " cannot be stored");
 						}
-					} catch (ClassNotFoundException cnfe) {
-						throw iae;
-					} catch (Throwable t) {
-						LogUtil.trace(t);
+					} catch (ReflectiveOperationException reflectionError) {
+						throw new IllegalStateException("The " + itemName + " item of document " + getUnid()
+								+ " could not be stored: " + reflectionError.getMessage(), reflectionError);
 					}
 				}
-			} catch (Throwable t) {
-				LogUtil.trace(t);
+			} catch (Exception legacyError) {
+				throw new IllegalStateException("The " + itemName + " item of document " + getUnid()
+						+ " cannot be stored: " + legacyError.getMessage(), legacyError);
 			}
-		} catch (Throwable t) {
-			LogUtil.trace(t);
+		} catch (Exception unexpected) {
+			throw new IllegalStateException("The " + itemName + " item of document " + getUnid()
+					+ " could not be written: " + unexpected.getMessage(), unexpected);
 		}
 		return result;
 	}
@@ -329,6 +364,14 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 	}
 
 	public boolean save() {
+		if (loadError != null) {
+			/*
+			 * Saving a partially loaded model would write defaults over the items that
+			 * could not be read, turning a read problem into data loss.
+			 */
+			addErrorMessage("Not saving: " + loadError + ". Reload the document, fix the stored value, or discard the change.");
+			return false;
+		}
 		boolean result = false;
 		if (!querySave()) {
 			return false;

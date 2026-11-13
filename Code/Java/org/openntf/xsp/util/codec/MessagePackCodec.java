@@ -103,7 +103,7 @@ public final class MessagePackCodec implements ValueCodec {
 		Object tree = StructuredValues.normalise(value);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		try (DataOutputStream out = new DataOutputStream(bytes)) {
-			write(out, tree, 0);
+			write(out, bytes, tree, 0);
 		}
 		if (bytes.size() > MAX_PAYLOAD_BYTES) {
 			throw new IOException("The encoded value is " + bytes.size() + " bytes, more than the " + MAX_PAYLOAD_BYTES
@@ -112,7 +112,16 @@ public final class MessagePackCodec implements ValueCodec {
 		return bytes.toByteArray();
 	}
 
-	private static void write(final DataOutputStream out, final Object value, final int depth) throws IOException {
+	private static void write(final DataOutputStream out, final ByteArrayOutputStream sink, final Object value, final int depth)
+			throws IOException {
+		/*
+		 * The budget is checked before every value, so a large tree is refused while it is
+		 * being written instead of after the whole byte array exists.
+		 */
+		if (sink.size() > MAX_PAYLOAD_BYTES) {
+			throw new IOException("The encoded value is already " + sink.size() + " bytes, more than the " + MAX_PAYLOAD_BYTES
+					+ "-byte limit; store it as a file or split it into several items");
+		}
 		if (depth > MAX_DEPTH) {
 			throw new IOException("The value tree is nested more than " + MAX_DEPTH + " levels deep");
 		}
@@ -135,13 +144,13 @@ public final class MessagePackCodec implements ValueCodec {
 		} else if (value instanceof Map<?, ?> map) {
 			writeHeader(out, map.size(), MAP_FIX, 0x0f, MAP16, MAP32);
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
-				write(out, String.valueOf(entry.getKey()), depth + 1);
-				write(out, entry.getValue(), depth + 1);
+				write(out, sink, String.valueOf(entry.getKey()), depth + 1);
+				write(out, sink, entry.getValue(), depth + 1);
 			}
 		} else if (value instanceof List<?> list) {
 			writeHeader(out, list.size(), ARRAY_FIX, 0x0f, ARRAY16, ARRAY32);
 			for (Object each : list) {
-				write(out, each, depth + 1);
+				write(out, sink, each, depth + 1);
 			}
 		} else {
 			throw new IOException("The value tree contains " + value.getClass().getName()

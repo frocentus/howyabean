@@ -43,6 +43,12 @@ public final class StructuredValues {
 	private StructuredValues() {
 	}
 
+	/** Nesting budget for {@link #normalise(Object)}; a cyclic tree hits it instead of the stack. */
+	private static final int MAX_DEPTH = 32;
+
+	/** Element budget for {@link #normalise(Object)}; a huge tree is refused before it is copied. */
+	private static final int MAX_NODES = 100000;
+
 	/**
 	 * The plain tree for a value, ready to be encoded.
 	 * 
@@ -50,6 +56,21 @@ public final class StructuredValues {
 	 *             if the value cannot be represented, naming the type and the alternative
 	 */
 	public static Object normalise(final Object value) {
+		return normalise(value, 0, new int[] { MAX_NODES });
+	}
+
+	private static Object normalise(final Object value, final int depth, final int[] budget) {
+		/*
+		 * The depth budget is applied while the tree is being copied, not after: a
+		 * self-referential map or list would otherwise recurse until the stack is gone,
+		 * before any later check could see it.
+		 */
+		if (depth > MAX_DEPTH) {
+			throw new IllegalArgumentException("The value is nested more than " + MAX_DEPTH + " levels deep");
+		}
+		if (--budget[0] < 0) {
+			throw new IllegalArgumentException("The value has more than " + MAX_NODES + " elements");
+		}
 		if (value == null || value instanceof String || value instanceof Boolean || value instanceof byte[]
 				|| value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long
 				|| value instanceof Float || value instanceof Double) {
@@ -71,7 +92,7 @@ public final class StructuredValues {
 			Map<String, Object> result = new LinkedHashMap<>();
 			result.put(TYPE_KEY, structured.type());
 			for (Map.Entry<String, Object> entry : structured.toMap().entrySet()) {
-				result.put(field(entry.getKey(), structured.getClass()), normalise(entry.getValue()));
+				result.put(field(entry.getKey(), structured.getClass()), normalise(entry.getValue(), depth + 1, budget));
 			}
 			return result;
 		}
@@ -79,7 +100,7 @@ public final class StructuredValues {
 			Map<String, Object> result = new LinkedHashMap<>();
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
 				if (entry.getKey() instanceof String name) {
-					result.put(field(name, value.getClass()), normalise(entry.getValue()));
+					result.put(field(name, value.getClass()), normalise(entry.getValue(), depth + 1, budget));
 				} else {
 					Object key = entry.getKey();
 					throw new IllegalArgumentException("A stored map needs string keys, but found "
@@ -91,12 +112,12 @@ public final class StructuredValues {
 		if (value instanceof Iterable<?> iterable) {
 			List<Object> result = new ArrayList<>();
 			for (Object each : iterable) {
-				result.add(normalise(each));
+				result.add(normalise(each, depth + 1, budget));
 			}
 			return result;
 		}
 		if (value instanceof Object[] array) {
-			return normalise(Arrays.asList(array));
+			return normalise(Arrays.asList(array), depth + 1, budget);
 		}
 		throw new IllegalArgumentException("Cannot store a value of type " + value.getClass().getName()
 				+ ": use a string, number, boolean, date, byte[], map, collection or a Structured implementation");
