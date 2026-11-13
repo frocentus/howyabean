@@ -133,7 +133,12 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">Beilagen</div>
 						<div class="panel-body">
-							<xp:fileDownload value="#{antrag.document}" allowDelete="#{foerder.role == 'Sachbearbeiter'}" />
+							<xp:panel rendered="#{foerder.role == 'Sachbearbeiter'}">
+								<xp:fileDownload value="#{antrag.document}" allowDelete="true" />
+							</xp:panel>
+							<xp:panel rendered="#{foerder.role != 'Sachbearbeiter'}">
+								<xp:fileDownload value="#{antrag.document}" allowDelete="false" />
+							</xp:panel>
 							<xp:panel rendered="#{foerder.role == 'Sachbearbeiter'}">
 								<div class="form-group" style="margin-top: 10px;">
 									<label>Beilage hinzufügen</label>
