@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-<note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='9.0'
- maintenanceversion='1.0' replicaid='85257C3A00267A39'>
-<noteinfo noteid='11a' unid='03BBD0D23F9ECFA685257C3A00267A41' sequence='0'>
-<created><datetime>20131207T020016,65-05</datetime></created>
-<modified><datetime>20140103T222350,21-05</datetime></modified>
-<revised><datetime>20140103T222338,40-05</datetime></revised>
-<lastaccessed><datetime>20140103T222350,21-05</datetime></lastaccessed>
-<addedtofile><datetime>20131207T020016,69-05</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Tim Tripcony/O=Best</name></updatedby>
-<wassignedby><name>CN=Tim Tripcony/O=Best</name></wassignedby>
+<note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='14.5'
+ maintenanceversion='1.0' replicaid='C1258EAE005C7388'>
+<noteinfo noteid='11e' unid='649411CEA7C73997C1258EAE005C738B' sequence='16'>
+<created><datetime>20261113T174948,91+01</datetime></created>
+<modified><datetime>20261113T195951,71+01</datetime></modified>
+<revised><datetime>20261113T195951,70+01</datetime></revised>
+<lastaccessed><datetime>20261113T195951,70+01</datetime></lastaccessed>
+<addedtofile><datetime>20261113T174948,91+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></updatedby>
+<wassignedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></wassignedby>
 <item name='IconBitmap' summary='true'>
 <rawitemdata type='6'>
 AiAgAQAA///////wD///4Af//8AD//4AAH/8AAA/+AAAH/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAA
@@ -25,9 +25,10 @@ EREdd3fRERER8AAAAAAA////Ed3dEf///wAAAAAAAAAAAPERER8AAAAAAAAAAAAAAAAP///wAAAA
 AAAAUEECICABAAD/////+A4DgA==
 </rawitemdata></item>
 <item name='$LaunchXPageRunOnServer'><text>0</text></item>
-<item name='$TITLE'><text>How Ya Bean?</text></item>
-<item name='$Flags'><text>Jz!</text></item>
-<item name='$FlagsNoRefresh'><text>rv</text></item>
+<item name='$Daos'><text>0</text></item>
+<item name='$LargeSummary'><text>0</text></item>
 <item name='$DefaultXPage'><text>index.xsp</text></item>
-<item name='$Daos'><text>0</text></item></note>
+<item name='$TITLE'><text>How Ya Bean?</text></item>
+<item name='$Flags'><text>Jz7!</text></item>
+<item name='$FlagsNoRefresh'><text>rv</text></item></note>
 
