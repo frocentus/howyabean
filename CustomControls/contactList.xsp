@@ -15,7 +15,8 @@
 								<xp:link text="#{eachContact.firstName} #{eachContact.lastName}" value="/contact.xsp?id=#{javascript:return eachContact.getUniversalID();}" />
 								<xp:link styleClass="btn btn-danger pull-right">
 									<xp:eventHandler event="onclick" action="#{javascript:contact.deleteContact(eachContact.getUniversalID());}"
-										disableValidators="true" refreshMode="partial" refreshId="#{empty compositeData.refreshTarget ? 'listBody' : compositeData.refreshTarget}" />
+										disableValidators="true" refreshMode="partial" refreshId="#{empty compositeData.refreshTarget ? 'listBody' : compositeData.refreshTarget}"
+									onComplete="if (window.howyabean) { howyabean.refreshAreas('#{compositeData.refreshAlso}'); }" />
 									<i class="fa fa-lg fa-trash-o" />
 								</xp:link>
 							</td>
@@ -67,7 +68,8 @@
 									</xp:link>
 									<xp:link styleClass="btn btn-danger">
 										<xp:eventHandler event="onclick" action="#{javascript:contact.deleteContact(eachContact.getUniversalID());}"
-											disableValidators="true" refreshMode="partial" refreshId="#{empty compositeData.refreshTarget ? 'listBody' : compositeData.refreshTarget}" />
+											disableValidators="true" refreshMode="partial" refreshId="#{empty compositeData.refreshTarget ? 'listBody' : compositeData.refreshTarget}"
+									onComplete="if (window.howyabean) { howyabean.refreshAreas('#{compositeData.refreshAlso}'); }" />
 										<i class="fa fa-lg fa-trash-o" />
 									</xp:link>
 								</div>

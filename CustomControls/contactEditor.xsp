@@ -73,12 +73,14 @@
 			</xp:panel>
 			<xp:button id="buttonSaveContact" styleClass="pull-right btn-success" value=" Save" rendered="#{contact.editMode}">
 				<xp:eventHandler event="onclick" action="#{contact.save}" refreshMode="partial"
-					refreshId="#{empty compositeData.refreshTarget ? 'editorBody' : compositeData.refreshTarget}" />
+					refreshId="#{empty compositeData.refreshTarget ? 'editorBody' : compositeData.refreshTarget}"
+				onComplete="if (window.howyabean) { howyabean.refreshAreas('#{compositeData.refreshAlso}'); }" />
 				<i class="fa fa-lg fa-save" />
 			</xp:button>
 			<xp:button id="buttonEditContact" styleClass="pull-right btn-default" value=" Edit" rendered="#{!contact.editMode}">
 				<xp:eventHandler event="onclick" action="#{contact.edit}" refreshMode="partial"
-					refreshId="#{empty compositeData.refreshTarget ? 'editorBody' : compositeData.refreshTarget}" />
+					refreshId="#{empty compositeData.refreshTarget ? 'editorBody' : compositeData.refreshTarget}"
+				onComplete="if (window.howyabean) { howyabean.refreshAreas('#{compositeData.refreshAlso}'); }" />
 				<i class="fa fa-lg fa-pencil" />
 			</xp:button>
 		</xp:form>

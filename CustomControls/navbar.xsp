@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core">
+	<xp:scriptBlock id="refreshAreasScript">
+		<xp:this.value><![CDATA[
+			window.howyabean = window.howyabean || {};
+			/*
+			 * Refreshes the given client ids one after another. XPages allows only one
+			 * target per event, and a second request inside the same submit is dropped by
+			 * the 20 second submit lock, so every step calls XSP.allowSubmit() first.
+			 * The next id starts only when the previous response has been applied; a
+			 * failing id is logged and does not stop the remaining ones.
+			 */
+			howyabean.refreshAreas = function (ids) {
+				var list = (typeof ids === 'string') ? ids.split(/\s+/) : (ids || []);
+				var index = 0;
+				function next() {
+					if (index >= list.length) {
+						return;
+					}
+					var id = list[index++];
+					if (XSP.allowSubmit) {
+						XSP.allowSubmit();
+					}
+					XSP.partialRefreshGet(id, {
+						onComplete: next,
+						onError: function (error) {
+							console.error('refreshAreas: ' + id + ' failed', error);
+							next();
+						}
+					});
+				}
+				next();
+			};
+		]]></xp:this.value>
+	</xp:scriptBlock>
 	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
