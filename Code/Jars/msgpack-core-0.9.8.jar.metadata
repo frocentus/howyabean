@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><note xmlns="http://www.lotus.com/dxl" class="form" maintenanceversion="1.0" replicaid="C1258EAE005C7388" version="14.5">
+<noteinfo noteid="22e" sequence="2" unid="825EAC8EFF163BE3C1258EAE005D57BC">
+<created><datetime>20261113T175933,08+01</datetime></created>
+<modified><datetime>20261113T175933,10+01</datetime></modified>
+<revised><datetime>20261113T175933,09+01</datetime></revised>
+<lastaccessed><datetime>20261113T175933,09+01</datetime></lastaccessed>
+<addedtofile><datetime>20261113T175933,08+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></updatedby>
+<wassignedby><name>CN=Harald Reisinger/O=Harald Reisinger</name></wassignedby>
+<item name="$TITLE"><text>msgpack-core-0.9.8.jar</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+<item name="$Flags"><text>34567Cg~,</text></item>
+
+
+
+
+
+
+
+<item name="$FileNames" sign="true"><text>msgpack-core-0.9.8.jar</text></item></note>
