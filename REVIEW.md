@@ -1,7 +1,12 @@
 # How Ya Bean? — Architecture & Java-8 Review
 
 Reviewed as an **NSF on-disk project (ODP)** for IBM/HCL Domino (XPages).
-Repo contains design elements only (no documents), single commit `45b02eb "Initial Commit"`.
+Repo contains design elements only (no documents), one commit `45b02eb "Initial Commit"` on `master` plus the feature branch described in §6.
+
+This review describes the tree **after** the changes noted in §6 (MessagePack storage codec,
+`Recycle`/`MimeScope`, beanutils removal, XPages fixes). How the model, the storage format,
+the codec and the resource scopes work is documented in [README.md](README.md); this file is
+the finding list, the audit and the roadmap. Last updated 13 Nov 2026.
 
 ---
 
@@ -66,7 +71,7 @@ The layering is clean and the "smart bean" idea is genuinely nice, but in practi
 7. **`xsp.persistence.mode=fileex`** (`WebContent/WEB-INF/xsp.properties:3`) keeps session/view-scope state in a JVM-local directory. Fine on one server, silently broken in a Domino cluster or behind a load balancer (view-scope bean → `Unable to load ... state`/new bean per request on the other server). Use `dominodatabase` for clustered deployments.
 8. **Package namespace collision.** Utility classes live in `org.openntf.xsp.*` (`DominoUtil`, `LogUtil`, `Abstract*Model`), a namespace shared with other OpenNTF artifacts. Rename to `org.openntf.howyabean.*` before anyone copies them into another DB or plugin.
 9. **Third-party jars shipped into WEB-INF/lib.** `commons-beanutils 1.8.3` (2010, EOL) and `commons-collections 3.2.1` (EOL; the classic `InvokerTransformer` deserialization gadget chain, CVE-2015-6420/CVE-2015-6420-family). Both jars used to land in the NSF and on the app classloader for no net gain — beanutils was used only for `PropertyUtils` in one class, collections only as a transitive dependency. **Both dropped** (P1 #7): `AbstractSmartDocumentModel` now uses `java.beans.Introspector`, so the two `lib` entries are gone from `.classpath` and the jars from `WebContent/WEB-INF/lib`. One dependency is added: `msgpack-core 0.9.8` (Apache 2.0, active, no serialization-gadget surface). It is 123 KB, but note that it still lands in the NSF — a single-jar cost that buys viewable-by-nothing data with a safe reader; if that trade is not worth a jar, the codec seam allows a pure-Java writer later without touching the call sites.
-10. **No README / LICENSE / .gitignore.** `org.openntf`-prefixed code with no license file, no statement of required Domino version, no build instructions. `WebContent/WEB-INF/classes` (the `.classpath` output dir) and `Code/dbscript.lsdb` are also not ignored.
+10. **No LICENSE / .gitignore** — a README now exists (`README.md`: requirements, layout, model, storage format, codec, scopes, build), but `org.openntf`-prefixed code still ships with no license file and no `.gitignore`. `WebContent/WEB-INF/classes` (the `.classpath` output dir) and `Code/dbscript.lsdb` are not ignored.
 
 ---
 
@@ -184,10 +189,10 @@ What does exist now is a **local compile check**: JDK 8 and ~15 tiny stubs of `l
 
 **P1 — design corrections** (≈2–3 days)
 6. ✅ *The serialization surface is gone:* `phoneBook` is stored as a MessagePack MIME part (`X-Storage-Scheme: msgpack/1`) whose payload names the type per value (`{"@type": "org.openntf.howyabean.model.PhoneNumber", …}`); `PhoneNumber implements Structured` and registers `fromMap` for that name, so reading is data-driven and a class name from a document is only ever a registry key. `AbstractDocumentMapModel.replaceItemValue` tries the codec first and keeps the old `ObjectOutputStream` path only to read documents written by the previous version.
-   *Still open:* the item is one opaque blob — a view cannot show or sort phone numbers, a full-text index cannot find them, and two editors still overwrite each other's rows. The viewable design (multi-value `phoneCategory`/`phoneDigits`, aligned by position, still one document) is the next step; the codec seam makes that a change in `replaceItemValue` only.
+   *Still open:* the item is one opaque blob — a view cannot show or sort phone numbers, a full-text index cannot find them, and two editors still overwrite each other's rows. The viewable design (multi-value `phoneCategory`/`phoneDigits`, aligned by position, still one document) is the next step; the codec seam keeps that change inside the model's item mapping.
 7. ✅ *The reflective part is done:* `AbstractSmartDocumentModel` resolves each class's bean accessors once through `java.beans.Introspector` and caches them in a static `ConcurrentHashMap`, so `getValue`/`getType`/`isReadOnly`/`setValue` are a hash lookup plus (on a bean hit only) one `Method.invoke` — no exception is thrown to signal a document item, and `commons-beanutils` + `commons-collections` are gone (jars, `.classpath` entries).
    *Still open:* either give `ContactModel` real properties (`firstName`, `lastName`, …) so the smart layer earns its keep, or delete it and read the map directly.
-8. Move to a template (.ntf) for deployment; stop hand-maintaining the replica id; document the ODP metadata contract in a README.
+8. Move to a template (.ntf) for deployment; stop hand-maintaining the replica id. The ODP metadata contract is still only described in this review (§2), not in a deployment guide; `README.md` covers build, storage and the codec, not the ntf template workflow.
 9. Rename `org.openntf.xsp.*` → `org.openntf.howyabean.*`; fix `plugin.xml` id + missing `plugin.Activator`.
 
 **P2 — modernisation (only after pinning Domino ≥ 9.0.1 FP10 / V10+)**
@@ -202,6 +207,6 @@ What does exist now is a **local compile check**: JDK 8 and ~15 tiny stubs of `l
 ### Summary
 
 * **Architecture:** clean 3-layer "smart document model", but it duplicates `DominoDocument` and hides the child collection in one opaque MIME part. The exception per attribute is gone (per-class `Introspector` cache) and the part is now MessagePack with a code-registered type name rather than a class name out of the document.
-* **Domino environment:** versioned ACL with `-Default-` = Manager, hard-coded replica id, `fileex` persistence, missing compile settings and a build-less Java tree — the operational risks matter more than the code style.
-* **Java 8:** *nothing* is used; the code is Java 5/6-era (`$DesignerVersion 8.5.3`), and the target platform must be decided first — Java 8 language features were only compilable from DDE 10 / Domino 9.0.1 FP8 runtime onwards.
+* **Domino environment:** versioned ACL with `-Default-` = Manager, hard-coded replica id, `fileex` persistence and a build-less Java tree (compiler level is now versioned at 1.8) — the operational risks matter more than the code style.
+* **Java 8:** now in use and pinned at 1.8 — try-with-resources (`Recycle`/`MimeScope`), diamond, multi-catch, method references, `ConcurrentMap.computeIfAbsent`, `java.beans.Introspector` instead of beanutils. Deliberately still absent: lambdas/`Stream` (checked `NotesException` everywhere), `Optional`, `java.time`. The design elements are still stamped `$DesignerVersion 8.5.3`, so the target platform remains a decision, not a fact.
 * **Top 5 to fix now:** ACL (accepted as-is for the demo), `setConvertMIME` leak ✅, date pattern `mm`→`MM` ✅, Domino object recycling ✅, `phoneBook` storage format — serialization removed ✅, still one opaque item ⚠️.
