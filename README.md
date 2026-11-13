@@ -275,7 +275,11 @@ Details that bite:
   data — the permissive ACL (`-Default-` = Manager), the hard-coded replica id, `fileex`
   session persistence in a cluster, the shared `org.openntf.xsp.*` namespace, and the
   `plugin.xml` reference to a missing `plugin.Activator`.
-* No `LICENSE` and no `.gitignore` yet.
+
+## License
+
+[Apache License 2.0](LICENSE). The repository is a derivative of Tim Tripcony's OpenNTF
+demo; the copyright notice names the original author and OpenNTF.
 
 ## Documentation map
 
