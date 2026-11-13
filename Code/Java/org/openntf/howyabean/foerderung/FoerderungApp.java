@@ -26,7 +26,7 @@ import com.ibm.xsp.extlib.util.ExtLibUtil;
  *
  * Roles are a demo switch for the prototype: Sachbearbeiter (inspect, request a
  * correction), Genehmiger (approve, reject), Finanzabteilung (batch, release).
- */
+ */ 
 public class FoerderungApp implements Serializable { 
 
 	private static final long serialVersionUID = 1L;
@@ -37,8 +37,9 @@ public class FoerderungApp implements Serializable {
 	public static final String S_NACHBESSERUNG = "Nachbesserung";
 	public static final String S_BEWILLIGT = "Bewilligt";
 	public static final String S_ABGELEHNT = "Abgelehnt";
-	public static final String S_STORNIERT = "Storniert";
+	public static final String S_STORNIERT = "Storniert"; 
 
+	
 	private static final double[][] ADULTS_1 = {
 		{ 1770, 1950, 2130 }, { 2290, 2520, 2750 }, { 2810, 3090, 3370 },
 		{ 3330, 3660, 3990 }, { 3840, 4230, 4610 } };
@@ -366,7 +367,7 @@ public class FoerderungApp implements Serializable {
 		public String getDue() { return due == null || due.isEmpty() ? "" : due; }
 		public String getCreated() { return created; }
 		public boolean isMultiple() { return multiple; }
-		public boolean isOpen() { return !S_BEWILLIGT.equals(status) && !S_ABGELEHNT.equals(status) && !S_STORNIERT.equals(status); }
+		public boolean isOpen() { return !S_ABGELEHNT.equals(status) && !S_STORNIERT.equals(status); }
 		public boolean isApproved() { return S_BEWILLIGT.equals(status); }
 	}
 }
