@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
-	<xp:this.data>
-		<xp:dominoView var="contacts" viewName="contacts" />
-	</xp:this.data>
 	<xc:navbar />
 	<xp:div id="uiContainer" styleClass="container">
 		<xp:messages id="messages" errorClass="alert alert-danger" />
@@ -13,50 +10,7 @@
 						<h3 class="panel-title">My Contacts</h3>
 					</div>
 					<xp:div id="contactListContainer" styleClass="panel-body">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>First Name</th>
-									<th colspan="3">Last Name</th>
-								</tr>
-							</thead>
-							<tbody>
-								<xp:repeat id="repeatContacts" var="eachContact" value="#{contacts}" rows="5">
-									<tr>
-										<td>
-											<xp:text value="#{eachContact.firstName}" />
-										</td>
-										<td>
-											<xp:text value="#{eachContact.lastName}" />
-										</td>
-										<td>
-											<div class="btn-group">
-												<xp:link value="/crud.xsp?id=#{javascript:return eachContact.getUniversalID();}" styleClass="btn btn-default">
-													<i class="fa fa-lg fa-pencil" />
-												</xp:link>
-												<xp:link styleClass="btn btn-danger">
-													<xp:eventHandler event="onclick" action="#{javascript:contact.deleteContact(eachContact.getUniversalID());}"
-														disableValidators="true" refreshMode="partial" refreshId="uiContainer" />
-													<i class="fa fa-lg fa-trash-o" />
-												</xp:link>
-											</div>
-										</td>
-									</tr>
-								</xp:repeat>
-							</tbody>
-						</table>
-						<ul class="nav nav-pills nav-justified">
-							<li>
-								<xp:pager id="pagerContactsPrevious" for="repeatContacts" partialRefresh="true">
-									<xp:pagerControl type="Previous" id="pagerControlPrevious" value="Previous" />
-								</xp:pager>
-							</li>
-							<li>
-								<xp:pager id="pagerContactsNext" for="repeatContacts" partialRefresh="true">
-									<xp:pagerControl type="Next" id="pagerControlNext" value="Next" />
-								</xp:pager>
-							</li>
-						</ul>
+						<xc:contactList layout="table" rows="5" showPager="true" showEdit="true" editPage="/crud.xsp" />
 					</xp:div>
 				</div>
 			</div>

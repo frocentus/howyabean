@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core">
+	<xp:this.data>
+		<xp:dominoView var="contacts" viewName="contacts" />
+	</xp:this.data>
+
+	<!-- Sidebar layout: one column with the full name, used by index.xsp. -->
+	<xp:panel rendered="#{compositeData.layout == 'names'}">
+		<table class="table table-striped">
+			<tbody>
+				<xp:repeat id="repeatNames" var="eachContact" value="#{contacts}" rows="#{compositeData.rows}">
+					<tr>
+						<td>
+							<xp:link text="#{eachContact.firstName} #{eachContact.lastName}" value="/contact.xsp?id=#{javascript:return eachContact.getUniversalID();}" />
+							<xp:link styleClass="btn btn-danger pull-right">
+								<xp:eventHandler event="onclick" action="#{javascript:contact.deleteContact(eachContact.getUniversalID());}"
+									disableValidators="true" refreshMode="partial" refreshId="uiContainer" />
+								<i class="fa fa-lg fa-trash-o" />
+							</xp:link>
+						</td>
+					</tr>
+				</xp:repeat>
+			</tbody>
+		</table>
+		<xp:panel rendered="#{compositeData.showPager}">
+			<div class="panel-footer">
+				<ul class="nav nav-pills nav-justified">
+					<li>
+						<xp:pager id="pagerNamesPrevious" for="repeatNames" partialRefresh="true">
+							<xp:pagerControl type="Previous" id="pagerNamesPreviousControl" value="Previous" />
+						</xp:pager>
+					</li>
+					<li>
+						<xp:pager id="pagerNamesNext" for="repeatNames" partialRefresh="true">
+							<xp:pagerControl type="Next" id="pagerNamesNextControl" value="Next" />
+						</xp:pager>
+					</li>
+				</ul>
+			</div>
+		</xp:panel>
+	</xp:panel>
+
+	<!-- Table layout: first/last name columns and actions, used by crud.xsp. -->
+	<xp:panel rendered="#{compositeData.layout == 'table'}">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>First Name</th>
+					<th colspan="3">Last Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<xp:repeat id="repeatTable" var="eachContact" value="#{contacts}" rows="#{compositeData.rows}">
+					<tr>
+						<td>
+							<xp:text value="#{eachContact.firstName}" />
+						</td>
+						<td>
+							<xp:text value="#{eachContact.lastName}" />
+						</td>
+						<td>
+							<div class="btn-group">
+								<xp:link rendered="#{compositeData.showEdit}" styleClass="btn btn-default"
+									value="#{compositeData.editPage}?id=#{javascript:return eachContact.getUniversalID();}">
+									<i class="fa fa-lg fa-pencil" />
+								</xp:link>
+								<xp:link styleClass="btn btn-danger">
+									<xp:eventHandler event="onclick" action="#{javascript:contact.deleteContact(eachContact.getUniversalID());}"
+										disableValidators="true" refreshMode="partial" refreshId="uiContainer" />
+									<i class="fa fa-lg fa-trash-o" />
+								</xp:link>
+							</div>
+						</td>
+					</tr>
+				</xp:repeat>
+			</tbody>
+		</table>
+		<xp:panel rendered="#{compositeData.showPager}">
+			<ul class="nav nav-pills nav-justified">
+				<li>
+					<xp:pager id="pagerTablePrevious" for="repeatTable" partialRefresh="true">
+						<xp:pagerControl type="Previous" id="pagerTablePreviousControl" value="Previous" />
+					</xp:pager>
+				</li>
+				<li>
+					<xp:pager id="pagerTableNext" for="repeatTable" partialRefresh="true">
+						<xp:pagerControl type="Next" id="pagerTableNextControl" value="Next" />
+					</xp:pager>
+				</li>
+			</ul>
+		</xp:panel>
+	</xp:panel>
+</xp:view>
