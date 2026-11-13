@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -42,8 +39,8 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 	 * Items that never take part in the map <-> document round trip: either they are
 	 * stored by MIME handling itself or they are maintained by Domino.
 	 */
-	private static final Set<String> IGNORED_ITEMS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-			"MIME_Version", "$NoteHasNativeMIME", "$MIMETrack", "$UpdatedBy", "$Revisions", "$REF", "$Conflict")));
+	private static final Set<String> IGNORED_ITEMS = Set.of(
+			"MIME_Version", "$NoteHasNativeMIME", "$MIMETrack", "$UpdatedBy", "$Revisions", "$REF", "$Conflict");
 
 	private String unid;
 
@@ -115,10 +112,9 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 			Vector<?> items = doc.getItems();
 			parts.add(items);
 			for (Object eachItem : items) {
-				if (!(eachItem instanceof Item)) {
+				if (!(eachItem instanceof Item item)) {
 					continue;
 				}
-				Item item = (Item) eachItem;
 				String itemName = item.getName();
 				if (IGNORED_ITEMS.contains(itemName)) {
 					continue;
@@ -174,8 +170,8 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 				return null;
 			}
 			if (value instanceof Collection<?> || value instanceof Object[]) {
-				Collection<?> listValue = value instanceof Collection<?>
-						? (Collection<?>) value
+				Collection<?> listValue = value instanceof Collection<?> collection
+						? collection
 						: Arrays.asList((Object[]) value);
 				if (listValue.size() > MAX_NATIVE_VECTOR_SIZE) {
 					throw new IllegalArgumentException();
@@ -193,8 +189,8 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 								throw new IllegalArgumentException();
 							}
 						}
-						if (domNode instanceof String) {
-							totalStringSize += ((String) domNode).length();
+						if (domNode instanceof String text) {
+							totalStringSize += text.length();
 							if (totalStringSize > 14000) {
 								isNonSummary = true;
 							}
@@ -220,7 +216,7 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 				DominoUtil.incinerate(resultList);
 			} else {
 				Object domNode = DominoUtil.toDominoFriendly(value);
-				if (domNode instanceof String && ((String) domNode).length() > 60000) {
+				if (domNode instanceof String text && text.length() > 60000) {
 					throw new IllegalArgumentException();
 				}
 				try {
@@ -257,10 +253,9 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 				if (value instanceof Serializable) {
 					DominoUtil.saveState((Serializable) value, parent, itemName);
 					// result = null;
-				} else if (value instanceof DocumentCollection) {
+				} else if (value instanceof DocumentCollection docs) {
 					// NoteIDs would be faster for this and, particularly,
 					// NoteCollection, but it should be replica-friendly
-					DocumentCollection docs = (DocumentCollection) value;
 					String[] unids = new String[docs.getCount()];
 					int index = 0;
 					Document doc = docs.getFirstDocument();
@@ -268,13 +263,11 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 						unids[index++] = doc.getUniversalID();
 						doc = DominoUtil.next(doc, docs);
 					}
-					Map<String, String> headers = new HashMap<>(1);
-					headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
+					Map<String, String> headers = Map.of("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
 					DominoUtil.saveState(unids, parent, itemName, true, headers);
-				} else if (value instanceof NoteCollection) {
+				} else if (value instanceof NoteCollection notes) {
 					// Maybe it'd be faster to use .getNoteIDs - I'm not sure how
 					// the performance compares
-					NoteCollection notes = (NoteCollection) value;
 					String[] unids = new String[notes.getCount()];
 					String noteid = notes.getFirstNoteID();
 					int index = 0;
@@ -282,8 +275,7 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 						unids[index++] = notes.getUNID(noteid);
 						noteid = notes.getNextNoteID(noteid);
 					}
-					Map<String, String> headers = new HashMap<>(1);
-					headers.put("X-Original-Java-Class", value.getClass().getCanonicalName());
+					Map<String, String> headers = Map.of("X-Original-Java-Class", value.getClass().getCanonicalName());
 					DominoUtil.saveState(unids, parent, itemName, true, headers);
 				} else {
 					// Check to see if it's a StateHolder
@@ -294,9 +286,9 @@ public abstract class AbstractDocumentMapModel extends AbstractMapModel {
 							Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 							Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
 							Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-							Map<String, String> headers = new HashMap<>();
-							headers.put("X-Storage-Scheme", "StateHolder");
-							headers.put("X-Original-Java-Class", value.getClass().getName());
+							Map<String, String> headers = Map.of(
+									"X-Storage-Scheme", "StateHolder",
+									"X-Original-Java-Class", value.getClass().getName());
 							DominoUtil.saveState(state, parent, itemName, true, headers);
 							result = null;
 						} else {

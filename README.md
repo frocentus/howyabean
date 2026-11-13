@@ -16,7 +16,7 @@ file documents how the application and its storage layer work.
 
 | Component | Notes |
 |---|---|
-| Domino server | 14.5+ (JVM 21). The compiler level in `.settings/org.eclipse.jdt.core.prefs` is pinned to 21 so it matches the JVM Designer 14.5 runs on; the source itself still uses Java 8 language features, so lowering the three values is all it takes to target an older server. |
+| Domino server | 14.5+ (JVM 21). The compiler level in `.settings/org.eclipse.jdt.core.prefs` is pinned to 21 so it matches the JVM Designer 14.5 runs on; the source uses records and pattern matching, so an older target means rewriting those usages, not just the three preference values. |
 | Domino Designer | to open the ODP and sync it into an NSF. There is no build file; see [Building](#building). |
 | Extension Library | `com.ibm.xsp.extlib` (`xsp.library.depends` in `WebContent/WEB-INF/xsp.properties`). |
 | Third-party jar | `msgpack-core-0.9.8.jar` (Apache 2.0), a Java archive design element under `Code/Jars/` (with its `.metadata` companion). Designer puts it on the NSF build path itself, so `.classpath` must not list it again. |

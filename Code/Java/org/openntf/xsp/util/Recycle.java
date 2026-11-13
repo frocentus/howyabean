@@ -67,8 +67,8 @@ public final class Recycle implements AutoCloseable {
 	public Recycle add(final Collection<?> values) {
 		if (values != null) {
 			for (Object each : values) {
-				if (each instanceof Base) {
-					add((Base) each);
+				if (each instanceof Base base) {
+					add(base);
 				}
 			}
 		}

@@ -5,7 +5,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,19 +34,10 @@ public abstract class AbstractSmartDocumentModel extends AbstractDocumentMapMode
 
 	/**
 	 * The reflective accessors of one bean property. Either method can be {@code null}
-	 * (write-only or read-only property); {@link #type} is {@code null} when it could not
+	 * (write-only or read-only property); {@code type} is {@code null} when it could not
 	 * be determined.
 	 */
-	private static final class Accessor {
-		private final Method read;
-		private final Method write;
-		private final Class<?> type;
-
-		private Accessor(final Method read, final Method write, final Class<?> type) {
-			this.read = read;
-			this.write = write;
-			this.type = type;
-		}
+	private record Accessor(Method read, Method write, Class<?> type) {
 	}
 
 	/**
@@ -115,7 +105,7 @@ public abstract class AbstractSmartDocumentModel extends AbstractDocumentMapMode
 			// No bean properties at all: every key then resolves through the document map
 			LogUtil.trace(e);
 		}
-		return Collections.unmodifiableMap(result);
+		return Map.copyOf(result);
 	}
 
 	public void edit() {
@@ -125,10 +115,10 @@ public abstract class AbstractSmartDocumentModel extends AbstractDocumentMapMode
 	@Override
 	public Class<?> getType(final Object key) {
 		Accessor property = beanProperty(key);
-		if (property == null || property.type == null) {
+		if (property == null || property.type() == null) {
 			return super.getType(key);
 		}
-		return property.type;
+		return property.type();
 	}
 
 	protected <T> T getTypedValue(final String name, final Class<T> type) {
@@ -142,11 +132,11 @@ public abstract class AbstractSmartDocumentModel extends AbstractDocumentMapMode
 		 * A write-only property cannot be read, so it is treated like a document item -
 		 * which is exactly what the reflective lookup used to achieve by throwing.
 		 */
-		if (property == null || property.read == null) {
+		if (property == null || property.read() == null) {
 			return super.getValue(key);
 		}
 		try {
-			return property.read.invoke(this);
+			return property.read().invoke(this);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			/*
 			 * The getter itself failed. Falling back to the map keeps the page alive, but
@@ -170,7 +160,7 @@ public abstract class AbstractSmartDocumentModel extends AbstractDocumentMapMode
 		if (property == null) {
 			return super.isReadOnly(key);
 		}
-		return property.write == null;
+		return property.write() == null;
 	}
 
 	public void setEditMode(final boolean editMode) {
@@ -180,12 +170,12 @@ public abstract class AbstractSmartDocumentModel extends AbstractDocumentMapMode
 	@Override
 	public void setValue(final Object key, final Object value) {
 		Accessor property = beanProperty(key);
-		if (property == null || property.write == null) {
+		if (property == null || property.write() == null) {
 			super.setValue(key, value);
 			return;
 		}
 		try {
-			property.write.invoke(this, value);
+			property.write().invoke(this, value);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			LogUtil.trace(unwrap(e));
 			super.setValue(key, value);

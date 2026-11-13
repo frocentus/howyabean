@@ -97,27 +97,26 @@ public final class MessagePackCodec implements ValueCodec {
 	private static void write(final MessagePacker packer, final Object value) throws IOException {
 		if (value == null) {
 			packer.packNil();
-		} else if (value instanceof String) {
-			packer.packString((String) value);
-		} else if (value instanceof Boolean) {
-			packer.packBoolean((Boolean) value);
-		} else if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
-			packer.packLong(((Number) value).longValue());
-		} else if (value instanceof Float || value instanceof Double) {
-			packer.packDouble(((Number) value).doubleValue());
-		} else if (value instanceof byte[]) {
-			byte[] bytes = (byte[]) value;
+		} else if (value instanceof String text) {
+			packer.packString(text);
+		} else if (value instanceof Boolean flag) {
+			packer.packBoolean(flag);
+		} else if (value instanceof Number number) {
+			if (number instanceof Float || number instanceof Double) {
+				packer.packDouble(number.doubleValue());
+			} else {
+				packer.packLong(number.longValue());
+			}
+		} else if (value instanceof byte[] bytes) {
 			packer.packBinaryHeader(bytes.length);
 			packer.writePayload(bytes);
-		} else if (value instanceof Map) {
-			Map<?, ?> map = (Map<?, ?>) value;
+		} else if (value instanceof Map<?, ?> map) {
 			packer.packMapHeader(map.size());
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
 				packer.packString(String.valueOf(entry.getKey()));
 				write(packer, entry.getValue());
 			}
-		} else if (value instanceof List) {
-			List<?> list = (List<?>) value;
+		} else if (value instanceof List<?> list) {
 			packer.packArrayHeader(list.size());
 			for (Object each : list) {
 				write(packer, each);

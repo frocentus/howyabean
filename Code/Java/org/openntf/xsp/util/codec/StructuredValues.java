@@ -55,17 +55,16 @@ public final class StructuredValues {
 				|| value instanceof Float || value instanceof Double) {
 			return value;
 		}
-		if (value instanceof CharSequence) {
-			return value.toString();
+		if (value instanceof CharSequence sequence) {
+			return sequence.toString();
 		}
-		if (value instanceof Date) {
+		if (value instanceof Date date) {
 			Map<String, Object> result = new LinkedHashMap<>(2);
 			result.put(TYPE_KEY, DATE_TYPE);
-			result.put(VALUE_KEY, ((Date) value).getTime());
+			result.put(VALUE_KEY, date.getTime());
 			return result;
 		}
-		if (value instanceof Structured) {
-			Structured structured = (Structured) value;
+		if (value instanceof Structured structured) {
 			if (structured.type() == null || structured.type().isEmpty()) {
 				throw new IllegalArgumentException("A " + structured.getClass().getName() + " value has no type name to store it under");
 			}
@@ -76,27 +75,28 @@ public final class StructuredValues {
 			}
 			return result;
 		}
-		if (value instanceof Map) {
+		if (value instanceof Map<?, ?> map) {
 			Map<String, Object> result = new LinkedHashMap<>();
-			for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
-				Object key = entry.getKey();
-				if (!(key instanceof String)) {
+			for (Map.Entry<?, ?> entry : map.entrySet()) {
+				if (entry.getKey() instanceof String name) {
+					result.put(field(name, value.getClass()), normalise(entry.getValue()));
+				} else {
+					Object key = entry.getKey();
 					throw new IllegalArgumentException("A stored map needs string keys, but found "
 							+ (key == null ? "null" : "a " + key.getClass().getName()));
 				}
-				result.put(field((String) key, value.getClass()), normalise(entry.getValue()));
 			}
 			return result;
 		}
-		if (value instanceof Iterable) {
+		if (value instanceof Iterable<?> iterable) {
 			List<Object> result = new ArrayList<>();
-			for (Object each : (Iterable<?>) value) {
+			for (Object each : iterable) {
 				result.add(normalise(each));
 			}
 			return result;
 		}
-		if (value instanceof Object[]) {
-			return normalise(Arrays.asList((Object[]) value));
+		if (value instanceof Object[] array) {
+			return normalise(Arrays.asList(array));
 		}
 		throw new IllegalArgumentException("Cannot store a value of type " + value.getClass().getName()
 				+ ": use a string, number, boolean, date, byte[], map, collection or a Structured implementation");
@@ -122,8 +122,8 @@ public final class StructuredValues {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Object materialise(final Object value) {
-		if (value instanceof Map) {
-			Map<String, Object> source = (Map<String, Object>) value;
+		if (value instanceof Map<?, ?> map) {
+			Map<String, Object> source = (Map<String, Object>) map;
 			Object type = source.get(TYPE_KEY);
 			Map<String, Object> fields = new LinkedHashMap<>(source.size());
 			for (Map.Entry<String, Object> entry : source.entrySet()) {
@@ -144,9 +144,9 @@ public final class StructuredValues {
 			}
 			return fields;
 		}
-		if (value instanceof List) {
+		if (value instanceof List<?> list) {
 			List<Object> result = new ArrayList<>();
-			for (Object each : (List<?>) value) {
+			for (Object each : list) {
 				result.add(materialise(each));
 			}
 			return result;

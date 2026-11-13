@@ -51,31 +51,23 @@ public class DominoUtil {
 
 	public static void incinerate(final Object... objects) {
 		for (Object eachObject : objects) {
-			if (eachObject != null) {
-				if (eachObject instanceof Base) {
-					Base dominoObject = (Base) eachObject;
-					try {
-						dominoObject.recycle();
-					} catch (NotesException e) {
-						// already recycled: nothing left to release
-					}
-				} else if (eachObject instanceof Map<?, ?>) {
-					for (Map.Entry<?, ?> entry : ((Map<?, ?>) eachObject).entrySet()) {
-						incinerate(entry.getKey(), entry.getValue());
-					}
-				} else if (eachObject instanceof Collection<?>) {
-					for (Object obj : (Collection<?>) eachObject) {
-						incinerate(obj);
-					}
-				} else if (eachObject.getClass().isArray()) {
-					try {
-						Object[] objs = (Object[]) eachObject;
-						for (Object ao : objs) {
-							incinerate(ao);
-						}
-					} catch (Throwable t) {
-						// who cares?
-					}
+			if (eachObject instanceof Base dominoObject) {
+				try {
+					dominoObject.recycle();
+				} catch (NotesException e) {
+					// already recycled: nothing left to release
+				}
+			} else if (eachObject instanceof Map<?, ?> map) {
+				for (Map.Entry<?, ?> entry : map.entrySet()) {
+					incinerate(entry.getKey(), entry.getValue());
+				}
+			} else if (eachObject instanceof Collection<?> collection) {
+				for (Object each : collection) {
+					incinerate(each);
+				}
+			} else if (eachObject instanceof Object[] array) {
+				for (Object each : array) {
+					incinerate(each);
 				}
 			}
 		}
@@ -377,22 +369,24 @@ public class DominoUtil {
 		} else if (value instanceof Integer || value instanceof Double || value instanceof String) {
 			// already safe to store
 			return value;
-		} else if (value instanceof Boolean) {
-			return (Boolean) value ? "1" : "0";
+		} else if (value instanceof Boolean flag) {
+			return flag ? "1" : "0";
 		}
 		// Now for the illegal-but-convertible types
-		if (value instanceof Number) {
-			return ((Number) value).doubleValue();
+		if (value instanceof Number number) {
+			return number.doubleValue();
 		} else if (value instanceof Date || value instanceof Calendar) {
 			Session session = ExtLibUtil.getCurrentSession();
 			try {
-				return value instanceof Date ? session.createDateTime((Date) value) : session.createDateTime((Calendar) value);
+				return value instanceof Date date
+						? session.createDateTime(date)
+						: session.createDateTime((Calendar) value);
 			} catch (NotesException e) {
 				LogUtil.trace(e);
 				return null;
 			}
-		} else if (value instanceof CharSequence) {
-			return value.toString();
+		} else if (value instanceof CharSequence sequence) {
+			return sequence.toString();
 		}
 		throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
 	}
