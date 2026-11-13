@@ -2,18 +2,18 @@
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
 	<xc:navbar />
 	<xp:div id="uiContainer" styleClass="container">
-		<xp:messages id="messages" errorClass="alert alert-danger" />
-		<div class="row">
-			<div class="col-md-3">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">My Contacts</h3>
+		<xp:div id="listRegion">
+			<xp:messages id="messages" errorClass="alert alert-danger" />
+			<div class="row">
+				<div class="col-md-3">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">My Contacts</h3>
+						</div>
+						<xc:contactList layout="names" rows="5" showPager="true" showEdit="false" editPage="/crud.xsp" refreshTarget="listRegion" />
 					</div>
-					<xp:div id="listPanel">
-						<xc:contactList layout="names" rows="5" showPager="true" showEdit="false" editPage="/crud.xsp" refreshTarget="listPanel messages" />
-					</xp:div>
 				</div>
 			</div>
-		</div>
+		</xp:div>
 	</xp:div>
 </xp:view>
