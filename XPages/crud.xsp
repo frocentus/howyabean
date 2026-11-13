@@ -90,7 +90,7 @@
 								<xp:label for="birthDate" value="Birthday" />
 								<xp:inputText id="birthDate" type="date" value="#{contact.birthDate}">
 									<xp:this.converter>
-										<xp:convertDateTime type="date" dateStyle="short" pattern="yyyy-MM-dd" />
+										<xp:convertDateTime type="date" pattern="yyyy-MM-dd" />
 									</xp:this.converter>
 								</xp:inputText>
 							</div>
