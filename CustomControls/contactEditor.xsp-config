@@ -8,6 +8,11 @@
     <component-type>contactEditor</component-type>
     <composite-name>contactEditor</composite-name>
     <composite-file>/contactEditor.xsp</composite-file>
+    <property>
+      <description>Page areas to refresh after save or edit, space separated client ids (for example "editorPanel messages"). Empty refreshes the editor itself.</description>
+      <property-name>refreshTarget</property-name>
+      <property-class>string</property-class>
+    </property>
     <composite-extension>
       <designer-extension>
         <in-palette>true</in-palette>

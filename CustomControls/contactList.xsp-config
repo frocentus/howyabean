@@ -33,6 +33,11 @@
       <property-name>editPage</property-name>
       <property-class>string</property-class>
     </property>
+    <property>
+      <description>Page areas to refresh after a delete, space separated client ids (for example "listPanel messages"). Empty refreshes the list itself.</description>
+      <property-name>refreshTarget</property-name>
+      <property-class>string</property-class>
+    </property>
     <composite-extension>
       <designer-extension>
         <in-palette>true</in-palette>

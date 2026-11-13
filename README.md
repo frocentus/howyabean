@@ -29,8 +29,8 @@ file documents how the application and its storage layer work.
 | `XPages/index.xsp` | Contact list with a pager, rendered from the `contacts` view. |
 | `XPages/contact.xsp` | Detail/editor page; reads the UNID from `?id=`, saves via `#{contact.save}`. |
 | `XPages/crud.xsp` | List and editor combined on one page. |
-| `CustomControls/contactEditor.xsp` | Shared editor (`xc:contactEditor`): the fields, the phone book with add/remove, save and edit. Used by `contact.xsp` and `crud.xsp`, so both forms stay identical. |
-| `CustomControls/contactList.xsp` | Shared contact list (`xc:contactList`): `layout="names"` for the sidebar, `layout="table"` for the crud page; owns the view data source, the pager and the delete action. |
+| `CustomControls/contactEditor.xsp` | Shared editor (`xc:contactEditor`): the fields, the phone book with add/remove, save and edit. Used by `contact.xsp` and `crud.xsp`, so both forms stay identical. `refreshTarget` names the page areas (space separated client ids) a save or edit should refresh; empty means the editor itself. |
+| `CustomControls/contactList.xsp` | Shared contact list (`xc:contactList`): `layout="names"` for the sidebar, `layout="table"` for the crud page; owns the view data source, the pager and the delete action. `refreshTarget` does the same for a delete. |
 | `CustomControls/navbar.xsp` | Navigation bar (composite component `xc:navbar`). |
 | `Code/Java/org/openntf/howyabean/model/` | `ContactModel` (the bean the pages bind to), `PhoneNumber` (one repeat row). |
 | `Code/Java/org/openntf/xsp/model/` | `AbstractMapModel` → `AbstractDocumentMapModel` → `AbstractSmartDocumentModel`, the three-layer model. |

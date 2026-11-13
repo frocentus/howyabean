@@ -9,7 +9,9 @@
 					<div class="panel-heading">
 						<h3 class="panel-title">My Contacts</h3>
 					</div>
-					<xc:contactList layout="names" rows="5" showPager="true" showEdit="false" editPage="/crud.xsp" />
+					<xp:div id="listPanel">
+						<xc:contactList layout="names" rows="5" showPager="true" showEdit="false" editPage="/crud.xsp" refreshTarget="listPanel messages" />
+					</xp:div>
 				</div>
 			</div>
 		</div>

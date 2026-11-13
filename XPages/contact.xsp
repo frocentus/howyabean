@@ -2,6 +2,7 @@
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
 	<xc:navbar />
 	<xp:div id="uiContainer" styleClass="container">
+		<xp:messages id="messages" errorClass="alert alert-danger" />
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel panel-default">
@@ -9,7 +10,9 @@
 						<h3 class="panel-title">Contact Details</h3>
 					</div>
 					<div class="panel-body">
-						<xc:contactEditor />
+						<xp:div id="editorPanel">
+							<xc:contactEditor refreshTarget="editorPanel messages" />
+						</xp:div>
 					</div>
 				</div>
 			</div>
