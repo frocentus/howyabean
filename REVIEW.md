@@ -21,7 +21,7 @@ built-in `xp:dominoDocument` data source.
 | Area | Files |
 |---|---|
 | Pages | `XPages/index.xsp` (list + pager), `XPages/contact.xsp` (detail/editor), `XPages/crud.xsp` (list+detail combined) |
-| Custom control | `CustomControls/navbar.xsp` (+ `.xsp-config` composite component `navbar`, prefix `xc`) |
+| Custom control | `CustomControls/contactList.xsp` (+ `.xsp-config`, `xc:contactList`: list, pager and delete for both pages), `CustomControls/contactEditor.xsp` (+ `.xsp-config`, `xc:contactEditor`: the one editor form both pages use) and `CustomControls/navbar.xsp` (+ `.xsp-config` composite component `navbar`, prefix `xc`) |
 | Java | `Code/Java/org/openntf/howyabean/model/{ContactModel,PhoneNumber}.java`, `Code/Java/org/openntf/xsp/model/{AbstractMapModel,AbstractDocumentMapModel,AbstractSmartDocumentModel}.java`, `Code/Java/org/openntf/xsp/util/{DominoUtil,LogUtil}.java` |
 | Data | `Forms/contact.form`, `Views/contacts.view` (selection `Form = "contact"`, 2 columns, programmatic names `lastName` + `firstName`, collation lastName/firstName + `$Conflict`, `$REF`) |
 | Config | `WebContent/WEB-INF/faces-config.xml` (bean `contact`, view scope), `xsp.properties`, `plugin.xml`, `Resources/Themes/howyabean.theme` (extends `bootswatch_united`), `Resources/StyleSheets/howyabean.css` |
@@ -140,7 +140,7 @@ Also: XPages code compiled by newer DDE does not run on pre-FP8 servers regardle
 13. **`AbstractSmartDocumentModel` performance**: every read miss throws (see §1), and `isReadOnly` runs *two* reflective lookups per check (`:61`) and `getType` another (`:30`). Cache `PropertyDescriptor`s / `MethodHandle`s once per class.
 14. **`LogUtil.debug` allocates a `Throwable` just to get the caller** (`LogUtil.java:9`); `DEBUG_ENABLED`/`TRACE_ENABLED` are `static final true` (`:4-5`) so nothing is compiled out. Use `java.util.logging` (routes to `IBM_TECHNICAL_SUPPORT/xpages_*.log`) with a level check; `printStackTrace` to stdout (`:21`, `AbstractDocumentMapModel.java:112,297`, `DominoUtil.java:144,213`) never reaches the Domino log properly.
 15. **`contact.xsp:3-5` declares an `xp:dominoView` data source that is never used** on that page (the detail page needs no view) — a full view open per render for nothing.
-16. `index.xsp`/`crud.xsp` duplicate the same list markup (~30 lines each) — extract a custom control (`beans.xsp` style), the project already demonstrates the pattern with `navbar`.
+16. ✅ `index.xsp`/`crud.xsp` duplicated the list markup (~30 lines each). Both now use `xc:contactList` (`CustomControls/contactList.xsp`), which owns the view data source, the bounded repeat, the pager and the delete action; a `layout` property selects the sidebar (name link) or the table (first/last column with edit link).
 
 ### C. Robustness / security
 

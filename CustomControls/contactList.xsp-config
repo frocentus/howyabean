@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config>
+  <faces-config-extension>
+    <namespace-uri>http://www.ibm.com/xsp/custom</namespace-uri>
+    <default-prefix>xc</default-prefix>
+  </faces-config-extension>
+  <composite-component>
+    <component-type>contactList</component-type>
+    <composite-name>contactList</composite-name>
+    <composite-file>/contactList.xsp</composite-file>
+    <property>
+      <description>names renders one link column (sidebar), table renders first and last name columns with actions.</description>
+      <property-name>layout</property-name>
+      <property-class>string</property-class>
+    </property>
+    <property>
+      <description>Rows per page.</description>
+      <property-name>rows</property-name>
+      <property-class>int</property-class>
+    </property>
+    <property>
+      <description>Show the previous/next pager under the list.</description>
+      <property-name>showPager</property-name>
+      <property-class>boolean</property-class>
+    </property>
+    <property>
+      <description>Show the edit (pencil) link next to delete.</description>
+      <property-name>showEdit</property-name>
+      <property-class>boolean</property-class>
+    </property>
+    <property>
+      <description>Page the edit link opens, e.g. /crud.xsp.</description>
+      <property-name>editPage</property-name>
+      <property-class>string</property-class>
+    </property>
+    <property>
+      <description>Client id of the area to refresh after a delete, usually a container that includes the messages control. Empty refreshes the list itself.</description>
+      <property-name>refreshTarget</property-name>
+      <property-class>string</property-class>
+    </property>
+    <composite-extension>
+      <designer-extension>
+        <in-palette>true</in-palette>
+      </designer-extension>
+    </composite-extension>
+  </composite-component>
+</faces-config>
