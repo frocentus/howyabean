@@ -5,6 +5,7 @@
 	</xp:this.data>
 	<xc:navbar />
 	<xp:div id="uiContainer" styleClass="container">
+		<xp:messages id="messages" errorClass="alert alert-danger" />
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel panel-default">
@@ -42,7 +43,7 @@
 								<xp:label for="birthDate" value="Birthday" />
 								<xp:inputText id="birthDate" type="date" value="#{contact.birthDate}">
 									<xp:this.converter>
-										<xp:convertDateTime type="date" dateStyle="short" pattern="yyyy-mm-dd" />
+										<xp:convertDateTime type="date" dateStyle="short" pattern="yyyy-MM-dd" />
 									</xp:this.converter>
 								</xp:inputText>
 							</div>

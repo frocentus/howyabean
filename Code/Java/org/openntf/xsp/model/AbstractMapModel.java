@@ -27,7 +27,7 @@ public abstract class AbstractMapModel implements Serializable, DataObject {
 
 	protected Map<Object, Object> getValues() {
 		if (values == null) {
-			values = new HashMap<Object, Object>();
+			values = new HashMap<>();
 		}
 		return values;
 	}
