@@ -19,7 +19,7 @@ file documents how the application and its storage layer work.
 | Domino server | 14.5+ (JVM 21). The compiler level in `.settings/org.eclipse.jdt.core.prefs` is pinned to 21 so it matches the JVM Designer 14.5 runs on; the source uses records and pattern matching, so an older target means rewriting those usages, not just the three preference values. |
 | Domino Designer | to open the ODP and sync it into an NSF. There is no build file; see [Building](#building). |
 | Extension Library | `com.ibm.xsp.extlib` (`xsp.library.depends` in `WebContent/WEB-INF/xsp.properties`). |
-| Third-party jar | `msgpack-core-0.9.8.jar` (Apache 2.0), a Java archive design element under `Code/Jars/` (with its `.metadata` companion). Designer puts it on the NSF build path itself, so `.classpath` must not list it again. |
+| Third-party jar | none. The repository ships no external library: the codec writes and reads its binary format itself (see [Storage](#storage)). |
 | Theme | `Resources/Themes/howyabean.theme` extends `bootswatch_united`; pages use Bootstrap 3 markup. |
 
 ## Layout
@@ -91,6 +91,10 @@ Content-Type: application/x-msgpack
 X-Storage-Scheme: msgpack/1
 X-Original-Java-Class: java.util.ArrayList        (diagnosis only, never instantiated)
 ```
+
+The bytes are written and read by `MessagePackCodec` itself — a few hundred lines of
+`DataOutputStream`/`DataInputStream`, no library, no reflection, no `Unsafe`. The format is
+the same one the previous `msgpack-core` build produced, so items written by it stay readable.
 
 The payload can contain nil, booleans, integers (read back as `Long`), floats (read back
 as `Double`), strings, binary, arrays (as `List`) and maps with string keys (as
@@ -248,10 +252,11 @@ Details that bite:
 
 * `.classpath` is Designer-generated and is **not** a plain Eclipse build: `Code/Java` is
   not a classpath entry of its own and `Local` is a Designer-internal virtual folder.
-* Jars live in `Code/Jars/` as jar design elements, not as plain files in
-  `WebContent/WEB-INF/lib/`. Declaring one again as a `lib` entry in `.classpath` makes
-  Designer report *Build path contains duplicate entry*: the design element already
-  contributes `WebContent/WEB-INF/lib/<name>.jar` to the NSF project's build path.
+* The repository ships no third-party jar. If one is ever added, it belongs in `Code/Jars/`
+  as a jar design element (not as a plain file in `WebContent/WEB-INF/lib/`), and it must
+  **not** also be declared as a `lib` entry in `.classpath`: the design element already
+  contributes `WebContent/WEB-INF/lib/<name>.jar` to the build path, and the second entry
+  shows up as *Build path contains duplicate entry*.
 * `WebContent/WEB-INF/classes` is the compiler output directory (`.classpath`); it is not
   in the repository and should not be committed.
 * The compiler level is versioned in `.settings/org.eclipse.jdt.core.prefs`
@@ -270,26 +275,10 @@ Details that bite:
 
 ## Troubleshooting
 
-**`java.security.AccessControlException: Access denied ("java.lang.reflect.ReflectPermission" "suppressAccessChecks")`**
-
-`msgpack-core` looks up `sun.misc.Unsafe` through reflection (`MessageBuffer`, `DirectBufferAccess`
-→ `setAccessible`) while its static initializer runs, so the first codec value fails with
-`ExceptionInInitializerError` under the Java security manager of Notes/Designer or a Domino
-server. Grant the permission where the app runs:
-
-```
-// <Notes>\jvm\lib\security\java.policy, or <Domino>\jvm\lib\security\java.policy
-grant codeBase "xspnsf://server:0/howyabean.nsf/-" {
-    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
-};
-```
-
-For a local Designer preview a blanket `grant { ... };` without a codeBase is enough, but on a
-shared policy file scope it to the database. Restart Designer/the server afterwards.
-
-If you would rather not grant it at all, replace `MessagePackCodec` with a plain
-`DataOutputStream` codec: the codec seam exists for exactly that, and it would also drop the
-jar, its 123 KB in the NSF and the build-path entry.
+No Java policy grant is needed. The former `msgpack-core` jar reached for `sun.misc.Unsafe`
+through `setAccessible`, which the Notes/Designer and Domino security managers refuse with
+`ReflectPermission "suppressAccessChecks"`; since the codec implements the format itself, that
+dependency — and the permission — are gone.
 
 `AppProperties/database.properties` is rewritten by Designer on every sync (replica id, ODS,
 ACL log, icon element) — read it as a description of the target database, not as a file to
